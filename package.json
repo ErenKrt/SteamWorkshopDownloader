@@ -1,0 +1,16 @@
+{
+  "name": "steamworkshopdownloader",
+  "version": "1.0.1",
+  "description": "",
+  "main": "src/Main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["steam","workshopdownloader"],
+  "author": "EpEren",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.0"
+  },
+  "homepage": "https://github.com/ErenKrt/Node-SteamWorkshopDownloader"
+}
