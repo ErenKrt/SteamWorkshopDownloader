@@ -1,16 +1,57 @@
 {
   "name": "steamworkshopdownloader",
-  "version": "1.0.1",
-  "description": "",
-  "main": "src/Main.js",
+  "version": "2.0.0",
+  "description": "Download your Mods,Workshop items with SteamWorkshopDownloader on NodeJS. Currently using steamworkshopdownloader.io backend.",
+  "unpkg": "dist/index.min.js",
+  "module": "dist/index.mjs",
+  "main": "dist/index.js",
+  "types": "types/index.d.ts",
+  "files": [
+    "dist",
+    "types"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rollup -c",
+    "prepublishOnly": "npm run build",
+    "types": "tsc --noEmit",
+    "test": "uvu -r tsm test"
   },
-  "keywords": ["steam","workshopdownloader"],
-  "author": "EpEren",
-  "license": "ISC",
+  "bin": {
+    "steamwd": "./dist/cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ErenKrt/SteamWorkshopDownloader.js.git"
+  },
+  "keywords": [],
+  "author": {
+    "name": "erenkrt",
+    "email": "kurteren07@gmail.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ErenKrt/SteamWorkshopDownloader.js/issues"
+  },
+  "homepage": "https://github.com/ErenKrt/SteamWorkshopDownloader.js#readme",
   "dependencies": {
-    "axios": "^0.21.0"
+    "axios": "^0.26.0",
+    "nodemon": "^2.0.15"
   },
-  "homepage": "https://github.com/ErenKrt/Node-SteamWorkshopDownloader"
+  "devDependencies": {
+    "@guanghechen/rollup-config-cli": "^1.9.0",
+    "@rollup/plugin-node-resolve": "13.1.3",
+    "rollup": "2.66.1",
+    "rollup-plugin-terser": "7.0.2",
+    "rollup-plugin-typescript2": "0.27.1",
+    "tsm": "2.2.1",
+    "typescript": "4.5.5",
+    "uvu": "0.5.3"
+  }
 }
