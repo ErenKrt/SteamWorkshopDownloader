@@ -1,31 +1,22 @@
 {
-    "ts-node": {
-      "transpileOnly": true,
-      "compilerOptions": {
-        "module": "commonjs",
-        "sourceMap": true,
-      },
-      "include": [
-        "test/**/*"
-      ]
-    },
-    "compilerOptions": {
-      "target": "esnext",
-      "module": "esnext",
-      "declaration": true,
-      "declarationDir": "types",
-      "forceConsistentCasingInFileNames": true,
-      "moduleResolution": "node",
-      "strictNullChecks": true,
-      "noImplicitAny": true,
-      "strict": true
-    },
-    "include": [
-      "@types/**/*",
-      "src/**/*"
-    ],
-    "exclude": [
-      "node_modules"
-    ]
-  }
-  
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "lib": ["es6", "es2015"],
+    "types": ["node"],
+    "declaration": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "strict": true,
+  },
+  "exclude": [
+    "dist",
+    "node_modules"
+  ],
+  "include": [
+    "src"
+  ]
+}
