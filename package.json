@@ -1,6 +1,6 @@
 {
   "name": "steamworkshopdownloader",
-  "version": "2.0.1",
+  "version": "2.0.3",
   "description": "Download your Mods,Workshop items with SteamWorkshopDownloader on NodeJS. Currently using steamworkshopdownloader.io backend.",
   "main": "./dist/index.js",
   "files": [
