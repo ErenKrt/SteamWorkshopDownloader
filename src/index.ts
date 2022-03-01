@@ -6,6 +6,7 @@ import * as fs from "fs"
 export class Downloader{
     private options:DownladerOptions;
     private client:Axios;
+    private NodeCount:number=5;
 
     private endPoints={
         status:"download/status",
@@ -13,14 +14,16 @@ export class Downloader{
         download:"download/request",
         storage:"storage"
     }
-    constructor(
-        options:DownladerOptions = {
-            apiVersion:"node05",
-            userAgent:"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36 OPR/83.0.4254.62",
-            apiPrefix:"prod/api"
-        }
-    ){
-        this.options=options;
+    constructor(DownloaderOptions?:DownladerOptions){
+
+        if(DownloaderOptions==null)
+            DownloaderOptions= {
+                apiPrefix:"prod/api",
+                apiVersion:"node0"+Math.floor(Math.random()*this.NodeCount),
+                userAgent:"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36 OPR/83.0.4254.62"
+            }
+
+        this.options=DownloaderOptions;
 
         this.client= axios.create({
             baseURL:`https://${this.options.apiVersion}.steamworkshopdownloader.io/${this.options.apiPrefix}/`,

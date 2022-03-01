@@ -17,7 +17,7 @@ export interface Result<T>{
 export interface DownladerOptions{
     userAgent:string,
     apiVersion:string,
-    apiPrefix:string
+    apiPrefix:string 
 }
 export interface Info{
     id:number,
