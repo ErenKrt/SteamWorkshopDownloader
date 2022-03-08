@@ -15,11 +15,10 @@ export class Downloader{
         storage:"storage"
     }
     constructor(DownloaderOptions?:DownladerOptions){
-
         if(DownloaderOptions==null)
             DownloaderOptions= {
                 apiPrefix:"prod/api",
-                apiVersion:"node0"+Math.floor(Math.random()*this.NodeCount),
+                apiVersion:"node0"+(Math.floor(Math.random() * this.NodeCount) + 1),
                 userAgent:"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36 OPR/83.0.4254.62"
             }
 
@@ -32,6 +31,7 @@ export class Downloader{
             }
         });
     }
+
     private sleep(ms:number) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
@@ -40,7 +40,7 @@ export class Downloader{
             success:false
         };
         var Request=null;
-
+        console.log(this.client);
         try {
             Request= (await this.client.post(this.endPoints.file,`[${WorkshopID.toString()}]:`)).data;
         } catch (ex : any) {
