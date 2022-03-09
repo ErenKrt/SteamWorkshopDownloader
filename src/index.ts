@@ -40,7 +40,7 @@ export class Downloader{
             success:false
         };
         var Request=null;
-        console.log(this.client);
+        
         try {
             Request= (await this.client.post(this.endPoints.file,`[${WorkshopID.toString()}]:`)).data;
         } catch (ex : any) {
