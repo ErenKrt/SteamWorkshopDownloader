@@ -143,8 +143,6 @@ export class Downloader{
 
         var WillBeDownloaded= DownCollection.filter(x=>x.progress!=null);
 
-        console.log(WillBeDownloaded);
-
         do {
             let stats= (await this.client.post(this.endPoints.status,{
                 uuids:WillBeDownloaded.map(x=>x.uuid)
