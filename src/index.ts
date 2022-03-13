@@ -142,9 +142,10 @@ export class Downloader{
     
 
         var WillBeDownloaded= DownCollection.filter(x=>x.progress!=null);
-        
-        while(WillBeDownloaded.filter(x=>x.progress?.status==DownloadStatus.prepared).length != WillBeDownloaded.length){
 
+        console.log(WillBeDownloaded);
+
+        do {
             let stats= (await this.client.post(this.endPoints.status,{
                 uuids:WillBeDownloaded.map(x=>x.uuid)
             })).data;
@@ -164,7 +165,9 @@ export class Downloader{
                 }
             });
             await this.sleep(1000);
-        }
+        } while (WillBeDownloaded.filter(x=>x.progress?.status==DownloadStatus.prepared).length != WillBeDownloaded.length);
+
+        
 
         if(fs.existsSync(path.resolve(DownPath))==false)
             fs.mkdirSync(path.resolve(DownPath));
