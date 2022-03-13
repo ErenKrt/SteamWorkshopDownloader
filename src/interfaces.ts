@@ -28,7 +28,8 @@ export interface Info{
     safeTitle:string,
     uploadedDate:string,
     childs?:ChildInfo[] | null,
-    downloadType:DownloadType
+    downloadType:DownloadType,
+    fileType: number
 }
 export interface ChildInfo{
     id:number

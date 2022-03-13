@@ -67,7 +67,8 @@ export class Downloader{
                 image:SingleItem.file_url,
                 size:Number(SingleItem.file_size),
                 uploadedDate:SingleItem.time_created,
-                downloadType: SingleItem.download_format=="raw"?DownloadType.Raw:DownloadType.GmaExtract
+                downloadType: SingleItem.download_format=="raw"?DownloadType.Raw:DownloadType.GmaExtract,
+                fileType: SingleItem.file_type
             };
 
             if(SingleItem.children !=null && SingleItem.children.length > 0)
