@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const chalk = require('chalk');
 const { Client } = require('../dist/api');
 const { makeDownloadUrl } = require('../dist/api/utils');
