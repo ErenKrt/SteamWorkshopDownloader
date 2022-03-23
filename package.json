@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "nodemon test/index.ts",
-	"test": "uvu -r tsm test",
+	  "test": "uvu -r tsm test"
   },
   "bin": {
     "steamwd": "./bin/utils.js"
