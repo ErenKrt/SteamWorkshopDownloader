@@ -1,39 +1,24 @@
-import {Downloader} from '../src'
-import { Info } from '../src/interfaces';
+import { test } from 'uvu';
+import * as assert from 'uvu/assert';
+import { Client } from '../src/api'
 
-var MyDown= new Downloader();
+var MyClient= new Client();
 
-async function DownAll(Workshop : Info){
-    var WorkShopIDs:number[] = [];
-    if(Workshop.fileType!=2){
-        WorkShopIDs.push(Workshop.id);
-    }
+test('getItems', async () => {
+    const Res= await MyClient.getItems([274974442]);
+    assert.is((Res.success && Res.data.length > 0),true);
+});
+test('getFilesFromItems', async () => {
+    const getItems= await MyClient.getItems([274974442]);
+    assert.is((getItems.success && getItems.data.length > 0),true);
 
-    if(Workshop.childs!=null && Workshop.childs.length > 0){
-        Workshop.childs.forEach(SingleChild => {
-            WorkShopIDs.push(SingleChild.id);
-        });
-    }
-    
-    await MyDown.Download(WorkShopIDs,"./downs/");
-}
+    const getFiles= await MyClient.getFilesFromItems(getItems.data);
+    assert.is((getFiles.success && getFiles.data.length > 0),true);
+});
 
-(async function(){
-    var Down= await MyDown.Info([2276588418]);
+test('getFiles', async () => {
+    const Res= await MyClient.getFiles([274974442]);
+    assert.is((Res.success && Res.data.length > 0),true);
+});
 
-    if(Down.data==null || Down.data.length <= 0){
-        console.log("Cant find  workshop infos !!!");
-    }
-    
-    Down.data!.forEach(async Workshop => {
-        await DownAll(Workshop);
-    });
-
-
-    //var Parent= await MyDown.Info([2749243244]);
-    
-    //await MyDown.Download([2749243244,2749243244]);
-    //var Down= await MyDown.Download([2712258971,2712258978],"./downs/");
-
-    //console.log(Down);
-})()
+test.run();

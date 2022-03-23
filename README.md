@@ -3,7 +3,9 @@ Currently using steamworkshopdownloader.io backend.
 <div align="center">
     <a href="https://www.npmjs.com/package/steamworkshopdownloader">
         <img alt="Npm Page" src="https://img.shields.io/badge/steamworkshopdownloader-red?style=for-the-badge&logo=npm">
+        <img alt="Npm version" src="https://img.shields.io/npm/v/steamworkshopdownloader?style=for-the-badge">
     </a>
+    <img src="https://img.shields.io/npm/l/steamworkshopdownloader?style=for-the-badge">
     <br>
     <a href="https://github.com/ErenKrt/Node-SteamWorkshopDownloader/issues">
         <img alt="GitHub issues" src="https://img.shields.io/github/issues/ErenKrt/Node-SteamWorkshopDownloader?style=for-the-badge">
@@ -43,17 +45,32 @@ With [npm](https://npmjs.org/) installed, run
 You can download specific folder with global using.
 ```js
 > cd ./YourFolder
-> steamwd {WorkshopID}
-- - - - - - - - - - - -
+>
+> steamwd --help
+>
+> - - - - - - - - - - -
+> -d = Download dependencies.
+> -u = Unzip item
+> -ud = Unzip and delete zip
+> - - - - - - - - - - -
+>
+> - - - - - - - - - - -
+> steamwd [WorkshopIDS]
+> - - - - - - - - - - -
 > steamwd 2712258971 274974446 274974442
+> - - - - - - - - - - -
+> steamwd 2712258971 -d -u
+> - - - - - - - - - - -
+> steamwd download 2712258971 -ud
+> - - - - - - - - - - -
 ```
 <br>
 
 ## Import Using
 ```js
-import {Downloader} from 'steamworkshopdownloader'
+import { Client } from 'steamworkshopdownloader'
 
-const MyClient= new Downloader();
+const MyClient= new Client();
 ```
 <br>
 
@@ -61,16 +78,31 @@ const MyClient= new Downloader();
 Get info of workshop from ID.
 ```js
 (async function(){
-    console.log(await MyClient.Info([274974446]));
+    console.log(await MyClient.getItems([274974446]));
 })()
 ```
 
-Download workshop from ID(s).
+Get workshop files from item(s).
 ```js
 (async function(){
-    //[IDS],DownloadPath
-    var Down= await MyDown.Download([2712258971],"./downs/");
-    console.log(Down);
+    var items= await MyClient.getItems([2712258971]);
+
+    var res= await MyClient.getFilesFromItems(items.data,(Statu)=>{
+        console.log(items.data.find(x=>x.publishedfileid==Statu.publishedfileid).title_disk_safe+" => %"+Statu.progress+" | "+Statu.status);
+    });
+
+    console.log(res);
+})()
+```
+
+Get workshop files from ID(s).
+```js
+(async function(){
+    var res= await MyClient.getFiles([2712258971],(Statu)=>{
+        console.log(Statu.publishedfileid+" => %"+Statu.progress+" | "+Statu.status);
+    });
+
+    console.log(res);
 })()
 ```
 <hr>
