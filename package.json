@@ -1,6 +1,6 @@
 {
   "name": "steamworkshopdownloader",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Download your Mods, Workshop items with SteamWorkshopDownloader on NodeJS. Currently using steamworkshopdownloader.io backend.",
   "main": "index.js",
   "files": [
@@ -13,7 +13,7 @@
 	  "test": "uvu -r tsm test"
   },
   "bin": {
-    "steamwd": "./bin/utils.js"
+    "steamwd": "./bin/index.js"
   },
   "repository": {
     "type": "git",
