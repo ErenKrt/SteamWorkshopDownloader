@@ -1,9 +1,6 @@
-import { Client } from '../src/api'
-
+import { Client } from '../'
 import { FileStatus } from '../src/api/types'
-
 import { makeDownloadUrl } from '../src/api/utils'
-
 import Downloader from 'nodejs-file-downloader'
 
 var MyClient= new Client();
