@@ -10,12 +10,17 @@ const { getAllDepIDS, formatBytes } = require('./utils');
 const fs = require('fs');
 const path = require('path');
 const AdmZip = require("adm-zip");
+const _ = require('lodash');
 
 let downWorkshopIDS = [];
-let isdownloadDependencies = false;
 let downPath= path.resolve(process.cwd());
-let isUnzip=false;
-let isUnzipDel= false;
+
+let options={
+    downloadDependencies:false,
+    unzip:false,
+    unzipDelete: false,
+    downloadCount:20
+}
 
 const program = new Command();
 
@@ -27,17 +32,19 @@ program
 program.command('download', { isDefault: true })
     .description('Download workshop with ID')
     .argument('<numbers...>', 'Workshop IDS')
+    .option('-c, --itemcount',"number of simultaneous downloads",20)
     .option('-d, --dependencies', "Download all depencies of workshops.", false)
     .option('-u, --unzip',"Unzip after download", false)
     .option('-ud, --unzipdel',"Delete after unzip", false)
-    .action((workshopIDS, options) => {
-        isdownloadDependencies = options.dependencies;
-        isUnzip= options.unzip;
+    .action((workshopIDS, clioptions) => {
         downWorkshopIDS = workshopIDS;
-
-        if(options.unzipdel){
-            isUnzip= true;
-            isUnzipDel=true;
+        options.downloadCount= clioptions.itemcount;
+        options.downloadDependencies= clioptions.dependencies;
+        if(clioptions.unzipdel){
+            options.unzip=true;
+            options.unzipDelete=true;
+        }else{
+            options.unzip= clioptions.unzip;
         }
     });
 
@@ -62,8 +69,9 @@ let getItems= async (IDS) =>{
 
     const getItems= await MyClient.getItems(IDS);
     if(getItems.success==false) return showError(getItems.message);
+    
 
-    for (const SingleItem of getItems.data){
+    for(const SingleItem of getItems.data){
         if(SingleItem.file_type!=2){
             ResIDS.push(SingleItem.publishedfileid);
             var GetItem = await MyClient.getItems(ResIDS);
@@ -71,9 +79,9 @@ let getItems= async (IDS) =>{
             fetchedItems= fetchedItems.concat(GetItem.data);
         }
 
-        if ((isdownloadDependencies || SingleItem.file_type == 2) && SingleItem.children != null && SingleItem.children.length > 0) {
+        if ((options.downloadDependencies || SingleItem.file_type == 2) && SingleItem.children != null && SingleItem.children.length > 0) {
             var lookIDS = SingleItem.children.map(x => x.publishedfileid);
-    
+            
             if(SingleItem.file_type==0) ResIDS.push(SingleItem.publishedfileid);
     
             var getDeps = await getAllDepIDS(MyClient,lookIDS);
@@ -160,13 +168,13 @@ let download = async (Items) => {
         var downloadedPath= path.join(downPath,SDownloaded.fileName);
 
         console.log(chalk.green(getNameFromID(SDownloaded.publishedfileid)) +" downloaded as "+chalk.green(SDownloaded.fileName));
-        if(isUnzip){
+        if(options.unzip){
             const zip= new AdmZip(downloadedPath);
             zip.extractAllTo(path.join(downPath,getNameFromID(SDownloaded.publishedfileid)),true);
 
             console.log(chalk.green(SDownloaded.fileName) +" unzipped as "+chalk.green(getNameFromID(SDownloaded.publishedfileid)));
 
-            if(isUnzipDel) fs.unlink(downloadedPath,(err)=>{});
+            if(options.unzipDelete) fs.unlink(downloadedPath,(err)=>{});
         }
     });
     
@@ -174,9 +182,13 @@ let download = async (Items) => {
 };
 
 getItems(downWorkshopIDS)
-    .then(IDS=>{
-        prepareItems(IDS)
-            .then(Items=>{
-                download(Items)
-            })
+    .then(async IDS=>{
+        console.log(chalk.green("Will be download item count: "+IDS.length));
+        var workShopIDS= _.chunk(IDS,options.downloadCount);
+
+        for await(const WIDS of workShopIDS){
+            var Items= await prepareItems(WIDS);
+
+            if(Items!=null) await download(Items);
+        }
     }).catch(err=>showError(err));

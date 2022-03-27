@@ -1,6 +1,6 @@
 import { test } from 'uvu';
 import * as assert from 'uvu/assert';
-import { Client } from '../src/api'
+import { Client } from '../'
 
 var MyClient= new Client();
 

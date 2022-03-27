@@ -1,8 +1,8 @@
 {
   "name": "steamworkshopdownloader",
-  "version": "3.0.3",
+  "version": "3.1.0",
   "description": "Download your Mods, Workshop items with SteamWorkshopDownloader on NodeJS. Currently using steamworkshopdownloader.io backend.",
-  "main": "index.js",
+  "main": "./dist/api/index.js",
   "files": [
     "dist",
     "bin"
@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "nodemon test/index.ts",
-	  "test": "uvu -r tsm test"
+    "test": "uvu -r tsm test"
   },
   "bin": {
     "steamwd": "./bin/index.js"
@@ -19,10 +19,14 @@
     "type": "git",
     "url": "git+https://github.com/ErenKrt/SteamWorkshopDownloader.js.git"
   },
-  "keywords": ["steam","steam workshop","steam workshop downloader"],
+  "keywords": [
+    "steam",
+    "steam workshop",
+    "steam workshop downloader"
+  ],
   "author": {
-	"name": "erenkrt",
-	"email": "kurteren07@gmail.com"
+    "name": "erenkrt",
+    "email": "kurteren07@gmail.com"
   },
   "license": "ISC",
   "bugs": {
@@ -42,6 +46,7 @@
     "chalk": "^4.0.0",
     "cli-progress": "^3.10.0",
     "commander": "^9.1.0",
+    "lodash": "^4.17.21",
     "nodejs-file-downloader": "^4.9.3"
   }
 }

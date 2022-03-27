@@ -49,9 +49,10 @@ You can download specific folder with global using.
 > steamwd --help
 >
 > - - - - - - - - - - -
-> -d = Download dependencies.
-> -u = Unzip item
-> -ud = Unzip and delete zip
+> -c = Item count of same time download | default : 20
+> -d = Download dependencies. | default : false
+> -u = Unzip item | default : false
+> -ud = Unzip and delete zip | default : false
 > - - - - - - - - - - -
 >
 > - - - - - - - - - - -
