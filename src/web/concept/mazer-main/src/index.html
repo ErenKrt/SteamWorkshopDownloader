@@ -27,23 +27,39 @@
             </div>
             <div class="card">
                 <div class="card-header">
-                    <h4>Recent Messages</h4>
+                    <h4>Workshop Items</h4>
                 </div>
                 <div class="card-content pb-4">
                     <div class="px-4">
                         <button class='btn btn-block btn-xl btn-success font-bold mb-3'>Download All</button>
                     </div>
                     
-                    <div class="recent-message d-flex px-4 py-3">
-                        <div class="avatar avatar-lg">
-                            <img src="assets/images/faces/4.jpg">
-                        </div>
-                        <div class="name ms-4">
-                            <h5 class="mb-1">Hank Schrader</h5>
-                            <h6 class="text-muted mb-0">@johnducky</h6>
+                    <div class="recent-message px-4 py-3">
+                        <div class="row">
+                            <div class="col-12 d-flex">
+                                <div class="avatar avatar-lg">
+                                    <img src="assets/images/faces/4.jpg">
+                                </div>
+                                
+                                <div class="col-8">
+                                    <div class="name ms-4">
+                                        <h5 class="mb-1">Hank Schrader</h5>
+                                        <h6 class="text-muted">@a</h6>
+                                    </div>
+                                </div>
+                                
+                                <a class="stats-icon purple ms-2" href="#">
+                                    <i class="iconly-boldArrow---Down-3"></i>
+                                </a>
+                            </div>
+                            <div class="col-12">
+                                <div class="progress progress-primary  mb-4">
+                                    <div class="progress-bar progress-label" role="progressbar" style="width: 35%" aria-valuenow="50%"
+                                        aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    
                 </div>
             </div>
             <div class="card">
@@ -128,13 +144,26 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-12">
+                <div class="col-6">
                     <div class="card">
                         <div class="card-header">
-                            <h4>Profile Visit</h4>
+                            <h4>Schemes</h4>
                         </div>
-                        <div class="card-body">
-                            <div id="chart-profile-visit"></div>
+                        <div class="card-body" id="myitems">
+                            <div class="alert alert-danger" id="myalert" style="z-index: 1000000;">
+                                <h4 class="alert-heading">Danger</h4>
+                                <p>This is a danger alert.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>DO</h4>
+                        </div>
+                        <div class="card-body" id="dropzone">
+                           
                         </div>
                     </div>
                 </div>
@@ -143,7 +172,7 @@
                 <div class="col-12 col-xl-4">
                     <div class="card">
                         <div class="card-header">
-                            <h4>Profile Visit</h4>
+                            <h4>Schemes</h4>
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -259,4 +288,91 @@
 {% block js %}
 <script src="assets/vendors/apexcharts/apexcharts.js"></script>
 <script src="assets/js/pages/dashboard.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+
+<script>
+
+function dragMoveListener (event) {
+  var target = event.target
+  // keep the dragged position in the data-x/data-y attributes
+  var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
+  var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
+
+  // translate the element
+  target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
+
+  // update the posiion attributes
+  target.setAttribute('data-x', x)
+  target.setAttribute('data-y', y)
+}
+
+// this function is used later in the resizing and gesture demos
+window.dragMoveListener = dragMoveListener
+
+interact('#dropzone').dropzone({
+  // only accept elements matching this CSS selector
+  accept: '#myalert',
+  // Require a 75% element overlap for a drop to be possible
+  // listen for drop related events:
+
+  ondropactivate: function (event) {
+    // add active dropzone feedback
+    event.target.classList.add('drop-active')
+  },
+  ondragenter: function (event) {
+    var draggableElement = event.relatedTarget
+    var dropzoneElement = event.target
+
+    // feedback the possibility of a drop
+    dropzoneElement.classList.add('drop-target')
+    draggableElement.classList.add('can-drop')
+    draggableElement.textContent = 'Dragged in'
+  },
+  ondragleave: function (event) {
+    // remove the drop feedback style
+    event.target.classList.remove('drop-target')
+    event.relatedTarget.classList.remove('can-drop')
+    event.relatedTarget.textContent = 'Dragged out'
+  },
+  ondrop: function (event) {
+    event.relatedTarget.textContent = 'Dropped'
+  },
+  ondropdeactivate: function (event) {
+    // remove active dropzone feedback
+    event.target.classList.remove('drop-active')
+    event.target.classList.remove('drop-target')
+  }
+})
+
+function dragged(e) {
+    e.target.setAttribute('data-x', 0)
+    e.target.setAttribute('data-y', 0)
+    e.target.style.transform = 'translate(0px, 0px)';
+    e.target.classList.remove('can-drop')
+}
+
+interact('#myalert')
+  .draggable({
+    inertia: true,
+    autoScroll: true,
+    // dragMoveListener from the dragging demo above
+    listeners: { 
+        move: dragMoveListener,
+        end: dragged,
+     }
+  })
+</script>
+
+<style>
+    .can-drop::before{
+        position: absolute;
+    content: 'CAN DROP';
+    background-color: green;
+    right: 10px;
+    top: -10px;
+    padding: 5px;
+    border-radius: 50px;
+    }
+</style>
 {% endblock %}

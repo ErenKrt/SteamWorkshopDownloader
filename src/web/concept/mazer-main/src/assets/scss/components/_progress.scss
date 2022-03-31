@@ -20,12 +20,14 @@
         overflow: visible;
 
         &.progress-label:before {
-            content: attr(aria-valuenow) '%';
+            content: attr(aria-valuenow);
             position: absolute;
             right: 0;
-            top: -1.3rem;
+            top: 0rem;
+            margin-right: 1rem;
             color: $gray-700;
             font-size: .8rem;
+            color:white;
             
         }
     }
