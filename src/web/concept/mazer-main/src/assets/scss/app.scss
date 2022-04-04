@@ -38,7 +38,7 @@
 */
 
 // 0. Mixins
-@import "./mixins/navbar";
+//@import "./mixins/navbar";
 
 // 1. Variables
 @import "./variables";
@@ -58,10 +58,10 @@
 @import "./components/buttons";
 
 // - 2.5. breadcrumb
-@import "./components/breadcrumb";
+//@import "./components/breadcrumb";
 
 // - 2.6. carousel
-@import "./components/carousel";
+//@import "./components/carousel";
 
 // - 2.7. card
 @import "./components/card";
@@ -82,7 +82,7 @@
 @import "./components/sidebar";
 
 // - 2.13. navs
-@import "./components/navs";
+//@import "./components/navs";
 
 // - 2.14. navbar
 @import "./components/navbar";

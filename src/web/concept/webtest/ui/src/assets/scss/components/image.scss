@@ -1,4 +1,4 @@
-.avatar {
+.image {
     display: inline-flex;
     border-radius: 50%;
     text-align: center;
@@ -6,7 +6,7 @@
     position: relative;
 
     
-    .avatar-content {
+    .image-content {
         width: 32px;
         height: 32px;
         color: #fff;
@@ -27,15 +27,15 @@
         border-radius: 50%;
     }
 
-    &.avatar-sm {
-        .avatar-content, img {
+    &.image-sm {
+        .image-content, img {
             width: 24px;
             height: 24px;
             font-size: .8rem;
         }
     }
-    &.avatar-md {
-        .avatar-content, img {
+    &.image-md {
+        .image-content, img {
             width: 32px;
             height: 32px;
             font-size: .8rem;
@@ -48,15 +48,15 @@
             font-size: .8rem;
         }
     }
-    &.avatar-lg {
-        .avatar-content, img {
+    &.image-lg {
+        .image-content, img {
             width: 48px;
             height: 48px;
             font-size: 1.2rem;
         }
     }
-    &.avatar-xl {
-        .avatar-content, img {
+    &.image-xl {
+        .image-content, img {
             width: 60px;
             height: 60px;
             font-size: 1.4rem;
