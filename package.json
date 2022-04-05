@@ -10,6 +10,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "nodemon test/index.ts",
+    "webtest":"set NODE_ENV=dev && nodemon example/web.ts",
     "test": "uvu -r tsm test"
   },
   "bin": {
@@ -46,9 +47,11 @@
     "chalk": "^4.0.0",
     "cli-progress": "^3.10.0",
     "commander": "^9.1.0",
+    "express": "^4.17.3",
     "fs-extra": "^10.0.1",
     "glob": "^7.2.0",
     "lodash": "^4.17.21",
+    "morgan": "^1.10.0",
     "nodejs-file-downloader": "^4.9.3"
   }
 }

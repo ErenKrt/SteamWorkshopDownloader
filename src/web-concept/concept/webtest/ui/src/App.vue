@@ -51,7 +51,7 @@
                       </a>
                     </div>
                     <div class="col-12">
-                      <div class="progress progress-primary mb-4">
+                      <div class="progress progress-info mb-4">
                         <div
                           class="progress-bar progress-label"
                           role="progressbar"
@@ -175,6 +175,7 @@ export default {
 
 @import "@/assets/scss/_variables";
 @import 'bootstrap/scss/bootstrap';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
 
 @import "@/assets/scss/layouts/main";
 @import "@/assets/scss/layouts/default";

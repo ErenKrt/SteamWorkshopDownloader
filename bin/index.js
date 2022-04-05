@@ -2,6 +2,7 @@
 
 const chalk = require('chalk');
 const { Client } = require('../dist/api');
+const {startWeb} = require('../dist/web')
 const { makeDownloadUrl } = require('../dist/api/utils');
 const { Command } = require('commander');
 const Downloader = require("nodejs-file-downloader")
@@ -19,7 +20,8 @@ let options={
     downloadDependencies:false,
     unzip:false,
     unzipDelete: false,
-    downloadCount:20
+    downloadCount:20,
+    isWeb: false
 }
 
 const program = new Command();
@@ -48,9 +50,18 @@ program.command('download', { isDefault: true })
         }
     });
 
+
+program.command('web',{isDefault: false})
+    .action((data,clioptions)=>{
+        options.isWeb= true;
+    });
+
 program.parse();
 
 
+if(options.isWeb){
+    startWeb();
+}else{
 
 var MyClient = new Client();
 
@@ -192,3 +203,5 @@ getItems(downWorkshopIDS)
             if(Items!=null) await download(Items);
         }
     }).catch(err=>showError(err));
+  
+}
