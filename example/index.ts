@@ -1,4 +1,4 @@
-import { Client } from '../'
+import { Client } from '../src/api'
 import { FileStatus } from '../src/api/types'
 import { makeDownloadUrl } from '../src/api/utils'
 import Downloader from 'nodejs-file-downloader'

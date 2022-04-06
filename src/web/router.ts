@@ -1,35 +1,22 @@
-// Web API Router sınıfımız
+import { GetPathsRequest } from './types'
+import { getFolders } from './utils'
+import Schemes from './schemes'
+import express from 'express'
+import path from 'path';
 
-import path from "path";
-import glob from 'glob';
-import fs from 'fs';
+const operator = express.Router();
 
-// gerekli modülleri tanımlıyoruz
-var express = require('express')
-var operator = express.Router() 
-
-
-// HTTP Get talebi için tüm kontakların listesini dönüyoruz
-operator.route('/').get(function (req, res, next) {
+operator.route('/').get((req, res, next) => {
     res.json({a:5});
 })
 
-operator.route('/getPaths').get(function(req, res, next){
-    var mpath= path.resolve(process.cwd());
-    var merge= path.join(mpath,"*");
-    var datas= glob.sync(merge);
+operator.route('/getSchemes').get((req, res, next)=>{
+    res.json(Schemes);
+});
 
-    datas.forEach(SPath => {
-        console.log(SPath);
-        try {
-            fs.accessSync(SPath,fs.constants.W_OK);
-            console.log("CAN ACCESS");
-        } catch (error) {
-            console.log("CANT ACCESS");
-        }
-    });
-    
-    res.json(datas);
+operator.route('/getPaths').post((req, res, next)=>{
+    const params : GetPathsRequest= req.body;
+    res.json(getFolders(path.resolve(params.path)));
 });
 
 export default operator
