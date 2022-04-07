@@ -26,3 +26,45 @@ export const getFolders= (appPath)=>{
     });
     return res;
 }
+
+export const getAllDepIDS = async (MyClient,baseIDS)=>{
+    let lookIDS=baseIDS;
+    let willDownloadedIDS=[];
+    let fetchedItems = [];
+
+    do {
+        willDownloadedIDS = willDownloadedIDS.concat(lookIDS);
+        
+        var items = await MyClient.getItems(lookIDS);
+        if (items.success == false) return;
+
+        fetchedItems = fetchedItems.concat(items.data);
+        
+
+        var HasChilds = items.data.filter(x => x.children != null && x.children.length > 0);
+        
+        if (HasChilds.length > 0) {
+
+            lookIDS = [];
+
+            HasChilds.forEach(SingleItem => {
+                var NewIDS= lookIDS.concat(SingleItem.children.map(x => x.publishedfileid));
+                NewIDS.forEach(SingleID => {
+                    if(willDownloadedIDS.includes(SingleID)===false && lookIDS.includes(SingleID)===false){
+                        lookIDS.push(SingleID);
+                    }
+                });
+            });
+
+        } else {
+            lookIDS = null;
+        }
+
+
+    } while (lookIDS != null);
+
+    return {
+        IDS:willDownloadedIDS,
+        Items:fetchedItems
+    };
+};

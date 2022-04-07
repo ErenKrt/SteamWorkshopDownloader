@@ -20,3 +20,7 @@ export interface Scheme {
 export interface GetPathsRequest{
     path: string
 }
+
+export interface GetItemRequest{
+    itemID: number
+}

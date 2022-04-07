@@ -67,7 +67,7 @@ export interface Item {
   views: number;
   spoiler_tag: boolean;
   num_children: number;
-  children?: any;
+  children?: Children[];
   num_reports: number;
   previews?: any;
   tags: ItemTag[];
@@ -76,6 +76,11 @@ export interface Item {
   download_format: string;
 }
 
+export interface Children{
+    file_type: number;
+    publishedfileid: number;
+    sortorder: number;
+}
 
 export type GetFileCallback= (Status : FileStatus) => void 
 

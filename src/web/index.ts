@@ -5,6 +5,7 @@ import bodyParser from 'body-parser'
 import router from './router'
 import chalk from 'chalk';
 import http from 'http';
+import cors from 'cors';
 
 import { Server }  from 'socket.io';
 
@@ -17,6 +18,7 @@ function startSocket(){
 }
 
 function startAPI(){
+    app.use(cors())
     app.use(express.static(path.join(__dirname, '/public')))
     app.use(morgan('dev'))
      
@@ -42,5 +44,5 @@ function startWeb(port: number){
 }
 
 
-export { startWeb , app, server,socket };
+export { startWeb , app, server, socket };
 

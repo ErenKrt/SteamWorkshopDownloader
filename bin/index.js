@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-const {  } = require('../dist/api');
-
 const chalk = require('chalk');
 const { Client } = require('../dist/api');
 const {startWeb} = require('../dist/web')
