@@ -13,7 +13,7 @@ export interface Scheme {
     name: string;
     description: string; 
     params: Param[];
-    
+    acceptChilds: boolean;
     execute: (params:string[]) => boolean | void 
 }
 
@@ -23,4 +23,10 @@ export interface GetPathsRequest{
 
 export interface GetItemRequest{
     itemID: number
+}
+
+export interface MainConfig{
+    currentPath: string;
+    currentScheme?: number;
+    port: number;
 }

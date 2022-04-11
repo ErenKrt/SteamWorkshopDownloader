@@ -7,14 +7,35 @@ import chalk from 'chalk';
 import http from 'http';
 import cors from 'cors';
 
+import { Config } from './config'
 import { Server }  from 'socket.io';
+import { Client } from '../api'
 
+
+const config= new Config();
+
+
+const wdClient = new Client();
 const app = express()
 const server = http.createServer(app)
 let socket= null;
 
+
 function startSocket(){
-    socket= new Server(server);
+    var socket= new Server(server,{
+        cors:{
+            origin: "*"
+        }
+    });
+    socket.on("connection",(sc)=>{
+        console.log("Connected");
+
+        sc.on("prepare",(args)=>{
+            console.log(args);
+        })
+
+    });
+
 }
 
 function startAPI(){
@@ -35,14 +56,15 @@ function startAPI(){
     })
 }
 
-function startWeb(port: number){
+function startWeb(){
     startSocket();
     startAPI()
 
-    server.listen(port || process.env.PORT || 8080 );
+    const port= config.mainConfig.port || process.env.PORT || 8080;
+    server.listen(port);
     console.log(chalk.green("Server is ready on ")+chalk.red(port));
 }
 
 
-export { startWeb , app, server, socket };
+export { startWeb , app, server, socket, wdClient };
 

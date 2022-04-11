@@ -2,8 +2,11 @@ const { default: axios } = require("axios");
 
 class API{
     constructor(){
+        this.baseURL="http://127.0.0.1:3000/api",
+        this.socketURL= "http://127.0.0.1:3000/";
+
         this.client= axios.create({
-            baseURL: "http://127.0.0.1:3000/api"
+            baseURL: this.baseURL
         })
     }
     async request(method, url, data=null){

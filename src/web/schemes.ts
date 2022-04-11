@@ -18,6 +18,7 @@ var schemes:Scheme[] = [
                 name:"Path"
             }
         ],
+        acceptChilds:false,
         execute: (params)=>{
             if(params[0] && fs.existsSync(params[0]))
                 fs.unlinkSync(params[0]);
@@ -32,6 +33,7 @@ var schemes:Scheme[] = [
                 name:"Name"
             }
         ],
+        acceptChilds:false,
         execute: (params)=>{
             if(isFile(params[0])){
                 if(fs.existsSync(params[0])) fs.unlinkSync(params[0]);
@@ -54,6 +56,7 @@ var schemes:Scheme[] = [
                 name:"To Path / Folder",
             }
         ],
+        acceptChilds:false,
         execute: (params)=>{
             if(!params[0] || !params[1]) return;
             if(!fs.existsSync(params[1])) fs.mkdirSync(params[1]);
@@ -82,6 +85,7 @@ var schemes:Scheme[] = [
                 name:"File / Glob"
             }
         ],
+        acceptChilds: true,
         execute: (params)=>{
             if(isFile(params[0])){
                 var files= glob.sync(params[0]);

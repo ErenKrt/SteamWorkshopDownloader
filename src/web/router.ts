@@ -3,11 +3,7 @@ import { getFolders, getAllDepIDS } from './utils'
 import Schemes from './schemes'
 import express from 'express'
 import path from 'path';
-import { Client } from '../api'
-
-
-const wdClient = new Client();
-
+import { wdClient } from './index'
 const operator = express.Router();
 
 operator.route('/').get((req, res, next) => {
@@ -17,6 +13,7 @@ operator.route('/').get((req, res, next) => {
 operator.route('/getSchemes').get((req, res, next)=>{
     res.json({success:true,data:Schemes});
 });
+
 
 operator.route('/getPaths').post((req, res, next)=>{
     try {
@@ -31,7 +28,7 @@ operator.route("/getItem").post(async (req, res, next)=>{
     try {
         const params : GetItemRequest= req.body;
         var getItem= await wdClient.getItems([params.itemID]);
-        
+
         if(getItem.success==false || getItem.data.length<=0){
             res.json(getItem); 
             return;

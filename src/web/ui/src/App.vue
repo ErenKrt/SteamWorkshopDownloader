@@ -48,7 +48,19 @@
                     <h4>Schemes</h4>
                   </div>
                   <div class="card-body">
-                    <Scheme v-for="(scheme, index) in schemes" :key="index" :scheme="scheme" :showParams="true"/>
+                    <draggable
+                      class="dragArea"
+                      tag="div"
+                      :list="schemes"
+                      item-key="id"
+                      :clone="cloneScheme"
+                      :sort="false"
+                      :group="{ name: 'people', pull: 'clone', put: false }"
+                      >
+                      <template #item="{ element }">
+                        <Scheme :scheme="element" :childs="element.childs"/>
+                      </template>
+                    </draggable>
                   </div>
                 </div>
               </div>
@@ -57,58 +69,18 @@
                   <div class="card-header">
                     <h4>DO</h4>
                   </div>
-                  <div class="card-body" id="dropzone">
-                    <div class="alert alert-info" style="z-index: 1000000">
-                      <button
-                        type="button"
-                        class="btn-close float-end"
-                      ></button>
-                      <h4 class="alert-heading">Copy</h4>
-
-                      <div class="form-group">
-                        <label>Glob or path</label>
-                        <input
-                          type="text"
-                          class="form-control form-control-sm"
-                        />
-                      </div>
-                    </div>
-
-                    <div
-                      class="alert alert-warning"
-                      id="myalert"
-                      style="z-index: 1000000"
-                    >
-                      <h4 class="alert-heading">Has</h4>
-                      <div class="form-group">
-                        <label>Glob or path</label>
-                        <input
-                          type="text"
-                          class="form-control form-control-sm"
-                        />
-                      </div>
-
-                      <div class="card">
-                        <div class="card-header">
-                          <h6>Childs</h6>
-                        </div>
-                        <div class="card-body">
-                          <div
-                            class="alert alert-info"
-                            style="z-index: 1000000"
-                          >
-                            <h4 class="alert-heading">Copy</h4>
-                            <div class="form-group">
-                              <label>Glob or path</label>
-                              <input
-                                type="text"
-                                class="form-control form-control-sm"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                  <div class="card-body">
+                    <draggable
+                      class="dragArea"
+                      tag="div"
+                      group="people"
+                      :list="schemes2"
+                      item-key="genID"
+                      >
+                      <template #item="{ element }">
+                        <Scheme :scheme="element" :childs="element.childs" @remove="removeScheme" :showParams="true"/>
+                      </template>
+                    </draggable>
                   </div>
                 </div>
               </div>
@@ -127,11 +99,13 @@ import Footer from "./components/Footer.vue";
 import ListItem from "./components/ListItem.vue";
 import BlockUI from './components/BlockUI.vue'
 import Scheme from './components/Scheme.vue'
-
+import draggable from "vuedraggable";
 import API from './utils/API'
+import io from 'socket.io-client'
+
 
 export default {
-  components:{Header, Footer, ListItem, BlockUI, Scheme},
+  components:{Header, Footer, ListItem, BlockUI, Scheme, draggable},
   data(){
     return {
       itemSearch:{
@@ -140,7 +114,10 @@ export default {
       },
 
       workshopItems:[],
-      schemes:[]
+      schemes:[],
+      schemes2:[],
+      genID:0,
+      socket: io(API.socketURL)
     }
   },
   async mounted(){
@@ -151,10 +128,42 @@ export default {
     }
 
     this.schemes= GetSchemes.data;
+
+    this.socket.emit("prepare",{id:"test"});
   },
   methods:{
+
+    removeById(arr, targetId)
+    {
+      return arr.reduce((acc, obj) => 
+      (obj.genID === targetId) 
+        ? acc 
+        : [ ...acc, 
+            {
+              ...obj, 
+              ...(obj.childs && { childs: this.removeById(obj.childs, targetId) }) 
+            }
+          ]
+      , [])
+    },
+
+    removeScheme(genID){
+      this.schemes2= this.removeById(this.schemes2,genID);
+    },
+    cloneScheme(items) {
+      this.genID++;
+      items.childs=[];
+
+      return {
+        genID:this.genID,
+        ...items,
+      };
+    },
     async getItem(){
       if(this.itemSearch.writedID==null || this.itemSearch.writedID=="") return;
+      
+      if(this.workshopItems.find(x=>x.publishedfileid==this.itemSearch.writedID.trim())!=null) return;
+
       this.itemSearch.block=true;
       var GetItems= await API.getItem(this.itemSearch.writedID.trim());
       this.itemSearch.block=false;
