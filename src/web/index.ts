@@ -10,12 +10,12 @@ import cors from 'cors';
 import { Config } from './config'
 import { Server }  from 'socket.io';
 import { Client } from '../api'
-
+import { WebSocket } from './webSocket'
 
 const config= new Config();
 
-
 const wdClient = new Client();
+
 const app = express()
 const server = http.createServer(app)
 let socket= null;
@@ -31,9 +31,22 @@ function startSocket(){
         console.log("Connected");
 
         sc.on("prepare",(args)=>{
-            console.log(args);
+            wdClient.getFiles(args,(statu)=>{
+                sc.emit("preparing",
+                    {
+                        publishedfileid:statu.publishedfileid,
+                        progress: statu.progress,
+                        progressText: statu.progressText
+                    }
+                );
+            }).then(x=>{
+                sc.emit("prepared",x.data);
+            });
         })
 
+        sc.on('disconnect', function() {
+            console.log('Got disconnect!');
+         });
     });
 
 }
@@ -57,7 +70,8 @@ function startAPI(){
 }
 
 function startWeb(){
-    startSocket();
+    var sckt= new WebSocket(server);
+    //startSocket();
     startAPI()
 
     const port= config.mainConfig.port || process.env.PORT || 8080;

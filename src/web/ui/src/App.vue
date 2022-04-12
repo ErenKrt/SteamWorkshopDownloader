@@ -29,12 +29,12 @@
               </div>
               <div class="card-content pb-4">
                 <div class="px-4">
-                  <button class="btn btn-block btn-xl btn-success font-bold mb-3">
+                  <button class="btn btn-block btn-xl btn-success font-bold mb-3" @click="downloadAll">
                     Download All
                   </button>
                 </div>
 
-                <ListItem v-for="(item, index) in workshopItems" :key="index" :Item="item" :Download="null"/>
+                <ListItem v-for="(item, index) in workshopItems" :key="index" :Item="item" @clicked="download"/>
 
               </div>
             </div>
@@ -126,13 +126,34 @@ export default {
       this.$swal("Cant fetch schemes. Please reload page.");
       return;
     }
-
     this.schemes= GetSchemes.data;
 
-    this.socket.emit("prepare",{id:"test"});
+    this.socket.on("preparing",this.preparing)
+    this.socket.on("prepared",this.prepared);
   },
   methods:{
+    downloadAll(){
+      this.socket.emit("prepare",this.workshopItems.map(x=>x.publishedfileid));
+    },
+    download(id){
+      this.socket.emit("prepare",[id]);
+    },
+    preparing(args){
+      var ID= args.publishedfileid;
+      var find= this.workshopItems.find(x=>x.publishedfileid==ID);
+      if(find==null) return;
 
+      find.statu= args;
+    },
+    prepared(args){
+      var list= args;
+      list.forEach(singlePrepared => {
+        var ID= singlePrepared.publishedfileid;
+        var find= this.workshopItems.find(x=>x.publishedfileid==ID);
+        if(find==null) return;
+        find.statu= null;
+      });
+    },
     removeById(arr, targetId)
     {
       return arr.reduce((acc, obj) => 
