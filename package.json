@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "watch": "nodemon test/index.ts",
+    "watch": "nodemon example/index.ts",
     "test": "uvu -r tsm test"
   },
   "bin": {

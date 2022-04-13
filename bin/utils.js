@@ -6,14 +6,14 @@ module.exports.getAllDepIDS = async (MyClient,baseIDS)=>{
     let fetchedItems = [];
 
     do {
-        willDownloadedIDS = willDownloadedIDS.concat(lookIDS);
         
         var items = await MyClient.getItems(lookIDS);
         if (items.success == false) return;
 
+        willDownloadedIDS = willDownloadedIDS.concat(items.data.map(x=>x.publishedfileid));
+        
         fetchedItems = fetchedItems.concat(items.data);
         
-
         var HasChilds = items.data.filter(x => x.children != null && x.children.length > 0);
         
         if (HasChilds.length > 0) {
@@ -32,7 +32,6 @@ module.exports.getAllDepIDS = async (MyClient,baseIDS)=>{
         } else {
             lookIDS = null;
         }
-
 
     } while (lookIDS != null);
 
