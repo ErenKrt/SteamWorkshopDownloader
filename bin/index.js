@@ -92,10 +92,6 @@ let getItems= async (IDS) =>{
         }
     }
 
-    if(ResIDS.length == 51){
-        console.log(JSON.stringify(fetchedItems));
-    }
-
     return ResIDS;
 };
 
@@ -190,7 +186,7 @@ getItems(downWorkshopIDS)
 
 
         console.log(chalk.green("Will be download item count: "+IDS.length));
-        return;
+        
         var workShopIDS= _.chunk(IDS,options.downloadCount);
 
         for await(const WIDS of workShopIDS){
