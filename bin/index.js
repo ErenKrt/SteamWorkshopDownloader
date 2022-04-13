@@ -152,7 +152,6 @@ let download = async (Items) => {
     let downs = [];
 
     (Items).forEach(x => {
-
         const progress = multiBar.create(100, 0, { name: getNameFromID(x.publishedfileid)});
         var down = new Downloader({
             url: makeDownloadUrl(x),

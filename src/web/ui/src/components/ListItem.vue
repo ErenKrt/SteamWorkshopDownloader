@@ -15,9 +15,11 @@
           </div>
         </div>
 
-        <a v-if="Item.statu==null" class="stats-icon purple ms-2" href="#" @click="$emit('clicked',Item.publishedfileid)">
-          <i class="iconly-boldArrow---Down-3"></i>
-        </a>
+        <div class="col-3">
+          <a v-if="Item.statu==null" class="stats-icon purple ms-2 float-end" href="#" @click="$emit('clicked',Item.publishedfileid)">
+            <i class="iconly-boldArrow---Down-3"></i>
+          </a>
+        </div>
       </div>
       <div class="col-12" v-if="Item.statu">
         <div class="progress progress-info mt-2">

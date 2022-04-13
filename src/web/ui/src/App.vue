@@ -109,7 +109,7 @@ export default {
   data(){
     return {
       itemSearch:{
-        writedID:null,
+        writedID:"2712258971",
         block:false
       },
 
@@ -128,17 +128,17 @@ export default {
     }
     this.schemes= GetSchemes.data;
 
-    this.socket.on("preparing",this.preparing)
+    this.socket.on("statu",this.statu)
     this.socket.on("prepared",this.prepared);
   },
   methods:{
     downloadAll(){
-      this.socket.emit("prepare",this.workshopItems.map(x=>x.publishedfileid));
+      this.socket.emit("download",this.workshopItems.map(x=>x.publishedfileid));
     },
     download(id){
-      this.socket.emit("prepare",[id]);
+      this.socket.emit("download",[id]);
     },
-    preparing(args){
+    statu(args){
       var ID= args.publishedfileid;
       var find= this.workshopItems.find(x=>x.publishedfileid==ID);
       if(find==null) return;

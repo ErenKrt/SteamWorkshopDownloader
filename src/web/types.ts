@@ -1,3 +1,6 @@
+import { Socket } from "socket.io";
+import { Item } from "../api/types";
+
 export interface FileInfo{
     path?: string;
     canAccess?: boolean;
@@ -29,4 +32,9 @@ export interface MainConfig{
     currentPath: string;
     currentScheme?: number;
     port: number;
+}
+
+export interface Session{
+    socket: Socket,
+    items: Item[]
 }

@@ -18,38 +18,7 @@ const wdClient = new Client();
 
 const app = express()
 const server = http.createServer(app)
-let socket= null;
 
-
-function startSocket(){
-    var socket= new Server(server,{
-        cors:{
-            origin: "*"
-        }
-    });
-    socket.on("connection",(sc)=>{
-        console.log("Connected");
-
-        sc.on("prepare",(args)=>{
-            wdClient.getFiles(args,(statu)=>{
-                sc.emit("preparing",
-                    {
-                        publishedfileid:statu.publishedfileid,
-                        progress: statu.progress,
-                        progressText: statu.progressText
-                    }
-                );
-            }).then(x=>{
-                sc.emit("prepared",x.data);
-            });
-        })
-
-        sc.on('disconnect', function() {
-            console.log('Got disconnect!');
-         });
-    });
-
-}
 
 function startAPI(){
     app.use(cors())
@@ -70,8 +39,8 @@ function startAPI(){
 }
 
 function startWeb(){
-    var sckt= new WebSocket(server);
-    //startSocket();
+    var socket= new WebSocket(server);
+    
     startAPI()
 
     const port= config.mainConfig.port || process.env.PORT || 8080;
@@ -80,5 +49,5 @@ function startWeb(){
 }
 
 
-export { startWeb , app, server, socket, wdClient };
+export { startWeb , wdClient };
 
