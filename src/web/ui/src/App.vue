@@ -56,6 +56,8 @@
                       :clone="cloneScheme"
                       :sort="false"
                       :group="{ name: 'people', pull: 'clone', put: false }"
+                      @start="dragging = true"
+                      @end="dragging = false"
                       >
                       <template #item="{ element }">
                         <Scheme :scheme="element" :childs="element.childs"/>
@@ -76,9 +78,10 @@
                       group="people"
                       :list="schemes2"
                       item-key="genID"
+                      :disabled='dragging==false'
                       >
                       <template #item="{ element }">
-                        <Scheme :scheme="element" :childs="element.childs" @remove="removeScheme" :showParams="true"/>
+                        <Scheme :scheme="element" :childs="element.childs" @remove="removeScheme" :showParams="true" :disabled="dragging==false"/>
                       </template>
                     </draggable>
                   </div>
@@ -108,6 +111,7 @@ export default {
   components:{Header, Footer, ListItem, BlockUI, Scheme, draggable},
   data(){
     return {
+      dragging: false,
       itemSearch:{
         writedID:"2712258971",
         block:false
@@ -174,11 +178,11 @@ export default {
     cloneScheme(items) {
       this.genID++;
       items.childs=[];
-
-      return {
+    
+      return JSON.parse(JSON.stringify({
         genID:this.genID,
         ...items,
-      };
+      }));
     },
     async getItem(){
       if(this.itemSearch.writedID==null || this.itemSearch.writedID=="") return;
@@ -200,6 +204,7 @@ export default {
 }
 </script>
 
+<!---
 <style lang="scss">
 
 @use 'sass:math';
@@ -224,5 +229,13 @@ export default {
 //@import "@/assets/scss/image";
 
 
+
+</style>
+--->
+
+<style>
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+@import '@/assets/style.css';
 
 </style>

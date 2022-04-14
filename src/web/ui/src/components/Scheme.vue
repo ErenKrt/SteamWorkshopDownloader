@@ -19,6 +19,8 @@
                       group="people"
                       :list="scheme.childs"
                       item-key="genID"
+                      :empty-insert-threshold="300"
+                      :disabled='disabled'
                       >
                       <template #item="{ element }">
                         <Scheme :scheme="element" :childs="element.childs" :showParams="showParams" @remove="$emit('remove',element.genID)" />
@@ -47,6 +49,10 @@ export default {
       default: false,
       type: Boolean,
     },
+    disabled:{
+      default : false,
+      type: Boolean
+    }
   },
   data() {
     return {
