@@ -61,7 +61,7 @@ let showError = (message) => {
 };
 
 let getNameFromID= (ID)=>{
-    return fetchedItems.find(x => x.publishedfileid == ID)?.title_disk_safe || ID;
+    return fetchedItems.find(x => x.publishedfileid == ID).title_disk_safe || ID;
 };
 
 let getItems= async (IDS) =>{
