@@ -74,6 +74,8 @@ import Scheme from "@/components/Scheme.vue";
 import draggable from "vuedraggable";
 import API from "@/utils/API";
 import folderPreview from '../components/folderPreview.vue'
+import socket from '../utils/SOCKET'
+
 
 export default {
   components: { Scheme, draggable, folderPreview },
@@ -86,6 +88,8 @@ export default {
     };
   },
   async mounted() {
+    socket.emit("createFolder");
+    
     var GetSchemes = await API.getSchemes();
     if (GetSchemes.success == false) {
       this.$swal("Cant fetch schemes. Please reload page.");

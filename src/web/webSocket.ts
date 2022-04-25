@@ -3,7 +3,9 @@ import { Session } from './types';
 import { wdClient } from './index';
 import Downloader from "nodejs-file-downloader"
 import { makeDownloadUrl } from '../api/utils';
-
+import os from 'os'
+import path from 'path';
+import fs from 'fs';
 
 export class WebSocket{
     private server: Server;
@@ -34,6 +36,9 @@ export class WebSocket{
         });
 
         console.log(this.sessions);
+        client.on("createFolder",(args)=>{
+            this.createFolder(this.getSession(client.id));
+        })
 
         client.on("download",(args)=>{
             this.download(this.getSession(client.id),args);
@@ -54,6 +59,15 @@ export class WebSocket{
             title: error.title,
             description: error.description
         });
+    }
+
+    createFolder(session: Session){
+        console.log(session);
+        var mypath= path.join(os.tmpdir(),"rnd");
+        fs.mkdirSync(mypath);
+
+        fs.openSync(path.join(mypath,"test.txt"),"w");
+
     }
 
     async download(session: Session, IDS: number[]){
