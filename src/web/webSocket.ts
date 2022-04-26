@@ -5,7 +5,9 @@ import Downloader from "nodejs-file-downloader"
 import { makeDownloadUrl } from '../api/utils';
 import os from 'os'
 import path from 'path';
-import fs from 'fs';
+import fs, { readdirSync } from 'fs';
+import fse from 'fs-extra'
+
 
 export class WebSocket{
     private server: Server;
@@ -32,12 +34,15 @@ export class WebSocket{
         
         this.sessions.push({
             socket: client,
-            items:[]
+            items:[],
         });
 
-        console.log(this.sessions);
-        client.on("createFolder",(args)=>{
+        
+        client.on("folderPreview:createFolder",()=>{
             this.createFolder(this.getSession(client.id));
+        })
+        client.on("folderPreview:readFolder",()=>{
+            this.readFolder(this.getSession(client.id));
         })
 
         client.on("download",(args)=>{
@@ -47,9 +52,9 @@ export class WebSocket{
         client.on("disconnect",()=>{
             var index= this.sessions.findIndex(x=>x.socket.id==client.id);
             if(index!=-1)
+                if(this.sessions[index].previewFolder!=null && this.sessions[index].previewFolder!=undefined)
+                    fs.rmSync(this.sessions[index].previewFolder,{recursive:true})
                 this.sessions.splice(index,1);
-            
-            console.log(this.sessions);
         });
 
     }
@@ -62,12 +67,40 @@ export class WebSocket{
     }
 
     createFolder(session: Session){
-        console.log(session);
-        var mypath= path.join(os.tmpdir(),"rnd");
-        fs.mkdirSync(mypath);
+        var tempDir= fs.mkdtempSync(path.join(os.tmpdir(), 'steamwd-fp-'));
+        session.previewFolder= tempDir;
 
-        fs.openSync(path.join(mypath,"test.txt"),"w");
+        var files=["text.txt","text.png","text.json"];
+        files.forEach(singleFile => {
+            var ID= fs.openSync(path.join(tempDir,singleFile),"w");
+            fs.closeSync(ID);
+        });
 
+        this.readFolder(session);
+    }
+
+    getChilds(folderpath){
+        var items= readdirSync(folderpath, {withFileTypes: true});
+        var res=[];
+        items.forEach(singleItem => {
+            var createNew= {
+                name: singleItem.name,
+                children: null
+            };
+
+            if(singleItem.isDirectory())
+                createNew.children= this.getChilds(path.join(folderpath,singleItem.name));
+            
+            res.push(createNew);
+        });
+
+        return res;
+    }
+
+    readFolder(session: Session){
+        var folder= this.getChilds(session.previewFolder);
+        if(folder)
+            session.socket.emit("folderPreview:folder",folder)
     }
 
     async download(session: Session, IDS: number[]){

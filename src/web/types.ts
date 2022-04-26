@@ -36,5 +36,6 @@ export interface MainConfig{
 
 export interface Session{
     socket: Socket,
-    items: Item[]
+    items: Item[],
+    previewFolder?: string
 }

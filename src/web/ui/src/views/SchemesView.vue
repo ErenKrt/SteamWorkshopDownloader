@@ -1,5 +1,6 @@
 <template>
   <section class="row">
+    <button @click="readFolder">Test</button>
     <div class="col-12 col-lg-8">
       <div class="row">
         <div class="col-6">
@@ -61,7 +62,7 @@
           <h4>Folder Preview</h4>
         </div>
         <div class="card-body">
-          <folderPreview :schemes="schemes2" />
+          <folderPreview :folders="folders" />
         </div>
       </div>
     </div>
@@ -85,10 +86,14 @@ export default {
       schemes: [],
       schemes2: [],
       genID: 0,
+      folders:null
     };
   },
   async mounted() {
-    socket.emit("createFolder");
+    socket.emit("folderPreview:createFolder");
+    socket.on("folderPreview:folder",(data)=>{
+      this.folders= data;
+    });
     
     var GetSchemes = await API.getSchemes();
     if (GetSchemes.success == false) {
@@ -98,6 +103,9 @@ export default {
     this.schemes = GetSchemes.data;
   },
   methods: {
+    readFolder(){
+      socket.emit("folderPreview:readFolder");
+    },
     removeById(arr, targetId) {
       return arr.reduce(
         (acc, obj) =>

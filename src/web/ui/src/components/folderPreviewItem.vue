@@ -28,7 +28,7 @@ export default {
     props:["item"],
     computed: {
         isFolder: function() {
-            return this.item.children && this.item.children.length;
+            return this.item.children && this.item.children!=null;
         }
     },
 }
