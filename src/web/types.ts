@@ -1,5 +1,6 @@
 import { Socket } from "socket.io";
 import { Item } from "../api/types";
+import { wsFolderPreview } from "./wsFolderPreivew";
 
 export interface FileInfo{
     path?: string;
@@ -37,5 +38,5 @@ export interface MainConfig{
 export interface Session{
     socket: Socket,
     items: Item[],
-    previewFolder?: string
+    previewFolder?: wsFolderPreview
 }
