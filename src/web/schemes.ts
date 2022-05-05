@@ -3,7 +3,8 @@ import fs from "fs-extra";
 import glob from 'glob';
 import path from 'path';
 
-let isFile= (name)=>{
+let isFile= (fullPath)=>{
+    var name= path.basename(fullPath);
     if(name.includes('.')) return true;
     else return false;
 }
@@ -37,7 +38,7 @@ var schemes:Scheme[] = [
         execute: (params)=>{
             if(isFile(params[0])){
                 if(fs.existsSync(params[0])) fs.unlinkSync(params[0]);
-                fs.openSync(params[0],'w');
+                fs.closeSync(fs.openSync(params[0],"w"));
             }else{
                 if(fs.pathExistsSync(params[0])) fs.rmdirSync(params[0]);
                 fs.mkdirsSync(params[0]);
@@ -59,21 +60,29 @@ var schemes:Scheme[] = [
         acceptChilds:false,
         execute: (params)=>{
             if(!params[0] || !params[1]) return;
-            if(!fs.existsSync(params[1])) fs.mkdirSync(params[1]);
+            //if( isFile(params[1]) && !fs.existsSync(params[1])) fs.mkdirSync(params[1]);
 
-            if(isFile(params[0])){ // Files
+            var items= glob.sync(params[0]);
 
-                var files= glob.sync(params[0]);
-                
-                if(files.length > 0)
-                    files.forEach(file => {
-                        var fileName= path.basename(file);
-                        fs.copyFileSync(file,path.join(params[1],fileName));
-                    });
+            var copyPath= params[1];
+            var fileToFolder= false;
 
-                }else{ // Folder
-                    fs.copySync(params[0],params[1]);
-                }
+            if(!isFile(copyPath)){
+                if(!fs.existsSync(copyPath)) fs.mkdirSync(copyPath);
+                fileToFolder=true;
+            }
+
+            items.forEach(SingleItem => {
+                if(fileToFolder){
+                    var lastName= path.basename(SingleItem);
+                    if(isFile(lastName))
+                        fs.copyFileSync(SingleItem,path.join(copyPath,lastName));
+                    else
+                        fs.copySync(SingleItem,copyPath)
+                } 
+                else fs.copySync(SingleItem,copyPath);
+            });
+            
         }
     },
     {

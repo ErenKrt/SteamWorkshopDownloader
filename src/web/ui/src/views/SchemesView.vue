@@ -1,6 +1,5 @@
 <template>
   <section class="row">
-    <button @click="readFolder">Test</button>
     <div class="col-12 col-lg-8">
       <div class="row">
         <div class="col-6">
@@ -30,6 +29,9 @@
         <div class="col-6">
           <div class="card">
             <div class="card-header">
+              <button class="btn btn-success float-end" @click="runSchemes">
+                RUN
+              </button>
               <h4>DO</h4>
             </div>
             <div class="card-body">
@@ -90,19 +92,30 @@ export default {
     };
   },
   async mounted() {
-    socket.emit("folderPreview:createFolder");
-    socket.on("folderPreview:folder",(data)=>{
-      this.folders= data;
-    });
-    
+
     var GetSchemes = await API.getSchemes();
     if (GetSchemes.success == false) {
       this.$swal("Cant fetch schemes. Please reload page.");
       return;
     }
     this.schemes = GetSchemes.data;
+
+
+    socket.emit("folderPreview:createFolder");
+    socket.on("folderPreview:folder",(data)=>{
+      this.folders= data;
+    });
+    socket.on("folderPreview:error",(err)=>{
+      this.$swal(err);
+    })
+    
+    
+    
   },
   methods: {
+    runSchemes(){
+      socket.emit("folderPreview:runSchemes",this.schemes2);
+    },
     readFolder(){
       socket.emit("folderPreview:readFolder");
     },

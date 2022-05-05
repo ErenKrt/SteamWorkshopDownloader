@@ -10,6 +10,7 @@ export interface FileInfo{
 export interface Param{
     name: string;
     description?: string;
+    value?: string;
 }
 
 export interface Scheme {
