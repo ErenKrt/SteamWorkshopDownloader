@@ -78,7 +78,7 @@ let getItems= async (IDS) =>{
             if (GetItem.success == false) return showError(GetItem.message);
             fetchedItems= fetchedItems.concat(GetItem.data);
         }
-
+	
         if ((options.downloadDependencies || SingleItem.file_type == 2) && SingleItem.children != null && SingleItem.children.length > 0) {
             var lookIDS = SingleItem.children.map(x => x.publishedfileid);
             
@@ -87,7 +87,7 @@ let getItems= async (IDS) =>{
             var getDeps = await getAllDepIDS(MyClient,lookIDS);
 
             ResIDS= ResIDS.concat(getDeps.IDS);
-            fetchedItems= getDeps.Items;
+            fetchedItems= fetchedItems.concat(getDeps.Items);
             ResIDS = ResIDS.filter((item, i, ar) => ar.indexOf(item) === i);
         }
     }
