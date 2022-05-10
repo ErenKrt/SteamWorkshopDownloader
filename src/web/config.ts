@@ -1,6 +1,6 @@
 import path from "path";
 import os from "os";
-import { MainConfig } from "./types";
+import { MainConfig, SchemeSave } from "./types";
 import fs from "fs";
 
 export class Config {
@@ -13,6 +13,7 @@ export class Config {
     private baseConfig: string;
 
     mainConfig: MainConfig;
+    savedSchemesConfig: SchemeSave[];
 
     constructor(){
         this.baseDir= path.resolve(os.homedir(),".steamwd/")
@@ -42,5 +43,5 @@ export class Config {
     writeMainConfig() : void {
         fs.writeFileSync(this.baseConfig,JSON.stringify(this.defaultBaseConfig));
     }
-    
+
 }

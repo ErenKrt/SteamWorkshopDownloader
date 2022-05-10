@@ -13,6 +13,16 @@ export interface Param{
     value?: string;
 }
 
+export interface SchemeSave{
+    id: number;
+    params: Param[];
+}
+
+export interface SavedScheme{
+    name: string;
+    items: SchemeSave[];
+}
+
 export interface Scheme {
     id: number;
     name: string;

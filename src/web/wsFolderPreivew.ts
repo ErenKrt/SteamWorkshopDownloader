@@ -3,9 +3,10 @@ import fse from 'fs-extra'
 import path from 'path';
 import { Socket }  from 'socket.io';
 import os from 'os';
-import { Scheme } from './types'
+import { Scheme, SavedScheme } from './types'
 import _ from 'lodash'
 import defaultSchemes from './schemes'
+
 
 var folderTypes=[
     {
@@ -52,16 +53,74 @@ var folderTypes=[
             }
         ]
     }
-]
+];
+
+
+var savedSchemes : SavedScheme[]=[
+    {
+        name:"Test-1",
+        items:[
+            {
+                id:0,
+                params:[
+                    {
+                        name:"Path",
+                        value:"31"
+                    }
+                ]
+            },
+            {
+                id:1,
+                params:[
+                    {
+                        name:"Name",
+                        value:"62"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        name:"Test-2",
+        items:[
+            {
+                id:1,
+                params:[
+                    {
+                        name:"Name",
+                        value:"31"
+                    }
+                ]
+            },
+            {
+                id:0,
+                params:[
+                    {
+                        name:"Path",
+                        value:"62"
+                    }
+                ]
+            }
+        ]
+    }
+];
 
 export class wsFolderPreview {
     Client : Socket;
     MainFolderPath: string;
     OrjFolderPath: string;
     SimFolderPath: string;
+    SelectedFolder: number = 0;
 
     constructor(client : Socket){
         this.Client= client;
+
+        this.Client.emit("folderPreview:exampleFolders",folderTypes.map(x=>x.name));
+        this.Client.emit("folderPreview:savedSchemes",savedSchemes);
+
+        this.Client.on("folderPreview:changeFolder",(name)=>{
+            this.changeFolder(name);
+        });
 
         this.Client.on("folderPreview:createFolder",()=>{
             this.createFolder();
@@ -71,6 +130,10 @@ export class wsFolderPreview {
         })
         this.Client.on("folderPreview:runSchemes",(schemes)=>{
             this.runSchemes(schemes);
+        })
+        this.Client.on("disconnect",()=>{
+            if(this.MainFolderPath && fs.existsSync(this.MainFolderPath))
+                fs.rmSync(this.MainFolderPath,{ recursive:true });
         })
     }
 
@@ -90,6 +153,17 @@ export class wsFolderPreview {
         });
 
         return res;
+    }
+
+    changeFolder(name){
+        var find= folderTypes.findIndex(x=>x.name==name);
+        if(find!=-1){
+            this.SelectedFolder= find;
+            if(this.MainFolderPath && fs.existsSync(this.MainFolderPath)){
+                fs.rmSync(this.MainFolderPath,{ recursive:true });
+            }
+            this.createFolder();
+        }
     }
 
     createFolder(){
@@ -113,7 +187,7 @@ export class wsFolderPreview {
             }
         };
         
-        var myscheme= folderTypes[1];
+        var myscheme= folderTypes[this.SelectedFolder];
         (myscheme.items).forEach(singleItem => {
             createItem(singleItem,this.OrjFolderPath);
         });
@@ -131,6 +205,7 @@ export class wsFolderPreview {
 
     readFolder(){
         if(this.SimFolderPath && fs.existsSync(this.SimFolderPath))
+            this.Client.emit("folderPreview:mainFolder",this.MainFolderPath);
             this.Client.emit("folderPreview:folder",this.getChilds(this.SimFolderPath))
     }
 

@@ -29,11 +29,20 @@
         <div class="col-6">
           <div class="card">
             <div class="card-header">
+              <h4>Saved</h4>
+            </div>
+            <div class="card-body">
+              <button class="btn btn-success me-2" v-for="(saved,i) in savedSchemes" :key="i" @click="changeScheme(saved)">{{saved.name}}</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
               <button class="btn btn-success float-end" @click="runSchemes">
                 RUN
               </button>
-              <h4>DO</h4>
+              <h4>Tasks</h4>
             </div>
+
             <div class="card-body">
               <draggable
                 class="dragArea"
@@ -54,6 +63,16 @@
                 </template>
               </draggable>
             </div>
+            <div class="card-footer" v-if="schemes2.length > 0">
+              <div class="row">
+                <div class="col-10">
+                  <input class="form-control" v-model="schemeName"/>
+                </div>
+                <div class="col-2">
+                  <button class="btn btn-success float-end">Save</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -61,7 +80,16 @@
     <div class="col-12 col-lg-4">
       <div class="card">
         <div class="card-header">
+          <h4>Example folders</h4>
+        </div>
+        <div class="card-body">
+          <button class="btn btn-success me-2" v-for="(name,i) in exampleFolders" :key="i" @click="changeFolder(name)">{{name}}</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
           <h4>Folder Preview</h4>
+          <small>({{mainFolderPath}})</small>
         </div>
         <div class="card-body">
           <folderPreview :folders="folders" />
@@ -88,7 +116,11 @@ export default {
       schemes: [],
       schemes2: [],
       genID: 0,
-      folders:null
+      folders:null,
+      mainFolderPath: null,
+      exampleFolders:null,
+      savedSchemes: null,
+      schemeName:null
     };
   },
   async mounted() {
@@ -100,6 +132,13 @@ export default {
     }
     this.schemes = GetSchemes.data;
 
+    socket.on("folderPreview:savedSchemes",(data)=>{
+      this.savedSchemes=data;
+    })
+
+    socket.on("folderPreview:exampleFolders",(data)=>{
+      this.exampleFolders=data;
+    })
 
     socket.emit("folderPreview:createFolder");
     socket.on("folderPreview:folder",(data)=>{
@@ -108,11 +147,34 @@ export default {
     socket.on("folderPreview:error",(err)=>{
       this.$swal(err);
     })
-    
-    
-    
+
+    socket.on("folderPreview:mainFolder",(data)=>{
+      this.mainFolderPath= data;
+    });
+
   },
   methods: {
+    changeScheme(scheme){
+      this.schemeName=scheme.name;
+      var copied=[];
+
+      (scheme.items).forEach(singleScheme => {
+        var findOrj= this.schemes.find(x=>x.id==singleScheme.id);
+        if(findOrj!=null){
+          var copy= JSON.parse(JSON.stringify(findOrj));
+          copy.genID= this.genID;
+          copy.params= singleScheme.params;
+          copied.push(copy);
+
+          this.genID++;
+        }
+      });
+
+      this.schemes2= copied;
+    },
+    changeFolder(name){
+      socket.emit("folderPreview:changeFolder",name);
+    },
     runSchemes(){
       socket.emit("folderPreview:runSchemes",this.schemes2);
     },
@@ -139,6 +201,8 @@ export default {
 
     removeScheme(genID) {
       this.schemes2 = this.removeById(this.schemes2, genID);
+      if(this.schemes2.length <= 0)
+        this.schemeName=null;
     },
     cloneScheme(items) {
       this.genID++;
