@@ -14,7 +14,7 @@
   "resolved" "https://registry.npmjs.org/@babel/compat-data/-/compat-data-7.14.7.tgz"
   "version" "7.14.7"
 
-"@babel/core@^7.14.5":
+"@babel/core@^7.0.0", "@babel/core@^7.0.0-0", "@babel/core@^7.12.0", "@babel/core@^7.13.0", "@babel/core@^7.14.5", "@babel/core@^7.4.0-0":
   "integrity" "sha512-gJnOEWSqTk96qG5BoIrl5bVtc23DCycmIePPYnamY9RboYdI4nFy5vAQMSl81O5K/W0sLDWfGysnOECC+KUUCA=="
   "resolved" "https://registry.npmjs.org/@babel/core/-/core-7.14.6.tgz"
   "version" "7.14.6"
@@ -913,7 +913,7 @@
     "@nodelib/fs.scandir" "2.1.5"
     "fastq" "^1.6.0"
 
-"@popperjs/core@^2.9.2":
+"@popperjs/core@^2.10.2", "@popperjs/core@^2.9.2":
   "integrity" "sha512-VZMYa7+fXHdwIq1TDhSXoVmSPEGM/aa+6Aiq3nVVJ9bXr24zScr+NlKFKC3iPljA7ho/GAZr+d2jOf5GIRC30Q=="
   "resolved" "https://registry.npmjs.org/@popperjs/core/-/core-2.9.2.tgz"
   "version" "2.9.2"
@@ -1258,7 +1258,7 @@
   "resolved" "https://registry.npmjs.org/ajv-keywords/-/ajv-keywords-3.5.2.tgz"
   "version" "3.5.2"
 
-"ajv@^6.12.4", "ajv@^6.12.5":
+"ajv@^6.12.4", "ajv@^6.12.5", "ajv@^6.9.1":
   "integrity" "sha512-lRF8RORchjpKG50/WFf8xmg7sgCLFiYNNnqdKflk63whMQcWR5ngGjiSXkL9bjxy6B2npOK2HSMN49jEBMSkag=="
   "resolved" "https://registry.npmjs.org/ajv/-/ajv-6.12.5.tgz"
   "version" "6.12.5"
@@ -1628,7 +1628,7 @@
   dependencies:
     "lodash" "^4"
 
-"browser-sync@^2.27.3":
+"browser-sync@^2", "browser-sync@^2.27.3":
   "integrity" "sha512-kyU5t5Sbm0lwCZTM4r2TKO9opznOT/P8eorkwWF4leZkbIZGyZohbSBiifYEWWlElM/vCRRhN/AqBH/3sSfOUw=="
   "resolved" "https://registry.npmjs.org/browser-sync/-/browser-sync-2.27.3.tgz"
   "version" "2.27.3"
@@ -1900,7 +1900,7 @@
     "fuse.js" "^3.4.5"
     "redux" "^4.0.4"
 
-"chokidar@^3.5.1", "chokidar@>=3.0.0 <4.0.0":
+"chokidar@^3.3.0", "chokidar@^3.5.1", "chokidar@>=3.0.0 <4.0.0":
   "integrity" "sha512-ekGhOnNVPgT77r4K/U3GDhu+FQ2S8TnK/s2KbIGXi0SZWuwkZ2QNyfWdZW+TVfn84DpEP7rLeCt2UI6bJ8GwbQ=="
   "resolved" "https://registry.npmjs.org/chokidar/-/chokidar-3.5.2.tgz"
   "version" "3.5.2"
@@ -3542,7 +3542,7 @@
   "resolved" "https://registry.npmjs.org/ignore/-/ignore-5.1.8.tgz"
   "version" "5.1.8"
 
-"imagemin@^7.0.1":
+"imagemin@^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0", "imagemin@^7.0.1":
   "integrity" "sha512-33AmZ+xjZhg2JMCe+vDf6a9mzWukE7l+wAtesjE7KyteqqKjzxv7aVQeWnul1Ve26mWvEQqyPwl0OctNBfSR9w=="
   "resolved" "https://registry.npmjs.org/imagemin/-/imagemin-7.0.1.tgz"
   "version" "7.0.1"
@@ -3962,7 +3962,7 @@
   dependencies:
     "postcss-purgecss-laravel" "^2.0.0"
 
-"laravel-mix@^6.0.25":
+"laravel-mix@^6.0.0", "laravel-mix@^6.0.25":
   "integrity" "sha512-SDpLGUnXJ8g0rvtiLljSTJSR6awj86M2Jd3MhbtT32TCgwXdtajVLF7Mv2blsPLixGHtynwZgi+UFlYQbquPLg=="
   "resolved" "https://registry.npmjs.org/laravel-mix/-/laravel-mix-6.0.25.tgz"
   "version" "6.0.25"
@@ -5064,7 +5064,7 @@
   "resolved" "https://registry.npmjs.org/postcss-value-parser/-/postcss-value-parser-4.1.0.tgz"
   "version" "4.1.0"
 
-"postcss@^8.2.1", "postcss@^8.2.15", "postcss@^8.2.4", "postcss@^8.3.5":
+"postcss@^7.0.0 || ^8.0.1", "postcss@^8.0.9", "postcss@^8.1.0", "postcss@^8.2.1", "postcss@^8.2.15", "postcss@^8.2.2", "postcss@^8.2.4", "postcss@^8.3.1", "postcss@^8.3.5":
   "integrity" "sha512-NxTuJocUhYGsMiMFHDUkmjSKT3EdH4/WbGF6GCi1NDGk+vbcUTun4fpbOqaPtD8IIsztA2ilZm2DhYCuyN58gA=="
   "resolved" "https://registry.npmjs.org/postcss/-/postcss-8.3.5.tgz"
   "version" "8.3.5"
@@ -5522,7 +5522,7 @@
     "klona" "^2.0.4"
     "neo-async" "^2.6.2"
 
-"sass@^1.36":
+"sass@^1.3.0", "sass@^1.36":
   "integrity" "sha512-vIjX7izRxw3Wsiez7SX7D+j76v7tenfO18P59nonjr/nzCkZuoHuF7I/Fo0ZRZPKr88v29ivIdE9BqGDgQD/Nw=="
   "resolved" "https://registry.npmjs.org/sass/-/sass-1.41.1.tgz"
   "version" "1.41.1"
@@ -6429,7 +6429,7 @@
   dependencies:
     "minimalistic-assert" "^1.0.0"
 
-"webpack-cli@^4.7.2":
+"webpack-cli@^4.7.2", "webpack-cli@4.x.x":
   "integrity" "sha512-mEoLmnmOIZQNiRl0ebnjzQ74Hk0iKS5SiEEnpq3dRezoyR3yPaeQZCMCe+db4524pj1Pd5ghZXjT41KLzIhSLw=="
   "resolved" "https://registry.npmjs.org/webpack-cli/-/webpack-cli-4.7.2.tgz"
   "version" "4.7.2"
@@ -6525,7 +6525,7 @@
     "source-list-map" "^2.0.1"
     "source-map" "^0.6.1"
 
-"webpack@^5.38.1", "webpack@^5.40.0":
+"webpack@^1 || ^2 || ^3 || ^4", "webpack@^4.0.0 || ^5.0.0", "webpack@^4.27.0 || ^5.0.0", "webpack@^4.4.0 || ^5.0.0", "webpack@^5.0.0", "webpack@^5.1.0", "webpack@^5.38.1", "webpack@^5.40.0", "webpack@>=2", "webpack@3 || 4 || 5", "webpack@4.x.x || 5.x.x":
   "integrity" "sha512-c7f5e/WWrxXWUzQqTBg54vBs5RgcAgpvKE4F4VegVgfo4x660ZxYUF2/hpMkZUnLjgytVTitjeXaN4IPlXCGIw=="
   "resolved" "https://registry.npmjs.org/webpack/-/webpack-5.40.0.tgz"
   "version" "5.40.0"

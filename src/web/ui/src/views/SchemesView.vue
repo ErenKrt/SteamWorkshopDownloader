@@ -65,11 +65,14 @@
             </div>
             <div class="card-footer" v-if="schemes2.length > 0">
               <div class="row">
-                <div class="col-10">
+                <div :class="{'col-8':alreadyCreated,'col-10':!alreadyCreated}">
                   <input class="form-control" v-model="schemeName"/>
                 </div>
-                <div class="col-2">
-                  <button class="btn btn-success float-end">Save</button>
+                <div class="col-2 px-0">
+                  <button class="btn btn-success" @click="saveScheme">Save</button>
+                </div>
+                <div class="col-2 px-0" v-if="alreadyCreated">
+                  <button class="btn btn-danger" @click="deleteScheme()">Delete</button>
                 </div>
               </div>
             </div>
@@ -105,8 +108,7 @@ import Scheme from "@/components/Scheme.vue";
 import draggable from "vuedraggable";
 import API from "@/utils/API";
 import folderPreview from '../components/folderPreview.vue'
-import socket from '../utils/SOCKET'
-
+import { nextTick } from 'vue';
 
 export default {
   components: { Scheme, draggable, folderPreview },
@@ -132,54 +134,58 @@ export default {
     }
     this.schemes = GetSchemes.data;
 
-    socket.on("folderPreview:savedSchemes",(data)=>{
+    this.$socket.emit('folderPreview:getExampleFolders');
+    this.$socket.emit('folderPreview:getSavedSchemes');
+
+    this.$socket.on("folderPreview:savedSchemes",(data)=>{
       this.savedSchemes=data;
     })
 
-    socket.on("folderPreview:exampleFolders",(data)=>{
+    this.$socket.on("folderPreview:exampleFolders",(data)=>{
       this.exampleFolders=data;
     })
 
-    socket.emit("folderPreview:createFolder");
-    socket.on("folderPreview:folder",(data)=>{
+    this.$socket.emit("folderPreview:createFolder");
+    this.$socket.on("folderPreview:folder",(data)=>{
       this.folders= data;
     });
-    socket.on("folderPreview:error",(err)=>{
+    this.$socket.on("folderPreview:error",(err)=>{
       this.$swal(err);
     })
 
-    socket.on("folderPreview:mainFolder",(data)=>{
+    this.$socket.on("folderPreview:mainFolder",(data)=>{
       this.mainFolderPath= data;
     });
 
   },
+  computed:{
+    alreadyCreated(){
+      return this.savedSchemes.find(x=>x.name==this.schemeName)!=null;
+    }
+  },
   methods: {
     changeScheme(scheme){
       this.schemeName=scheme.name;
-      var copied=[];
-
-      (scheme.items).forEach(singleScheme => {
-        var findOrj= this.schemes.find(x=>x.id==singleScheme.id);
-        if(findOrj!=null){
-          var copy= JSON.parse(JSON.stringify(findOrj));
-          copy.genID= this.genID;
-          copy.params= singleScheme.params;
-          copied.push(copy);
-
-          this.genID++;
-        }
+      this.schemes2=[];
+      nextTick(()=>{
+        this.schemes2= scheme.schemes;
       });
-
-      this.schemes2= copied;
+      
+    },
+    saveScheme(){
+      this.$socket.emit("folderPreview:saveScheme",{name: this.schemeName, schemes: this.schemes2});
+    },
+    deleteScheme(){
+      this.$socket.emit("folderPreview:deleteScheme",this.schemeName);
     },
     changeFolder(name){
-      socket.emit("folderPreview:changeFolder",name);
+      this.$socket.emit("folderPreview:changeFolder",name);
     },
     runSchemes(){
-      socket.emit("folderPreview:runSchemes",this.schemes2);
+      this.$socket.emit("folderPreview:runSchemes",this.schemes2);
     },
     readFolder(){
-      socket.emit("folderPreview:readFolder");
+      this.$socket.emit("folderPreview:readFolder");
     },
     removeById(arr, targetId) {
       return arr.reduce(

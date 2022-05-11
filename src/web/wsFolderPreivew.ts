@@ -6,7 +6,7 @@ import os from 'os';
 import { Scheme, SavedScheme } from './types'
 import _ from 'lodash'
 import defaultSchemes from './schemes'
-
+import config from './config';
 
 var folderTypes=[
     {
@@ -55,7 +55,7 @@ var folderTypes=[
     }
 ];
 
-
+/*
 var savedSchemes : SavedScheme[]=[
     {
         name:"Test-1",
@@ -104,6 +104,7 @@ var savedSchemes : SavedScheme[]=[
         ]
     }
 ];
+*/
 
 export class wsFolderPreview {
     Client : Socket;
@@ -115,8 +116,14 @@ export class wsFolderPreview {
     constructor(client : Socket){
         this.Client= client;
 
-        this.Client.emit("folderPreview:exampleFolders",folderTypes.map(x=>x.name));
-        this.Client.emit("folderPreview:savedSchemes",savedSchemes);
+        this.Client.on("folderPreview:getExampleFolders",()=>{
+            this.Client.emit("folderPreview:exampleFolders",folderTypes.map(x=>x.name));
+        });
+
+        this.Client.on("folderPreview:getSavedSchemes",()=>{
+            this.Client.emit("folderPreview:savedSchemes",config.savedSchemesConfig);
+        });
+
 
         this.Client.on("folderPreview:changeFolder",(name)=>{
             this.changeFolder(name);
@@ -131,6 +138,13 @@ export class wsFolderPreview {
         this.Client.on("folderPreview:runSchemes",(schemes)=>{
             this.runSchemes(schemes);
         })
+        this.Client.on("folderPreview:saveScheme",(data)=>{
+            this.saveSchemes(data);
+        });
+        this.Client.on("folderPreview:deleteScheme",(name)=>{
+            this.deleteScheme(name);
+        });
+
         this.Client.on("disconnect",()=>{
             if(this.MainFolderPath && fs.existsSync(this.MainFolderPath))
                 fs.rmSync(this.MainFolderPath,{ recursive:true });
@@ -167,6 +181,9 @@ export class wsFolderPreview {
     }
 
     createFolder(){
+        if(this.MainFolderPath && fs.existsSync(this.MainFolderPath))
+                fs.rmSync(this.MainFolderPath,{ recursive:true });
+                
         this.MainFolderPath= fs.mkdtempSync(path.join(os.tmpdir(), 'steamwd-fp-'));
         this.SimFolderPath= path.join(this.MainFolderPath,"sim");
         this.OrjFolderPath= path.join(this.MainFolderPath,"orj");
@@ -249,6 +266,25 @@ export class wsFolderPreview {
         }
 
         this.readFolder();
+    }
+
+    saveSchemes(data){
+        if(!data.name) return;
+        if(!data.schemes) return;
+        let find= config.savedSchemesConfig.find(x=>x.name==data.name);
+        if(find)
+            find.items= data.schemes;
+        else
+            config.savedSchemesConfig.push(data);
+
+        config.updateSavedSchemes(config.savedSchemesConfig);
+        this.Client.emit("folderPreview:savedSchemes",config.savedSchemesConfig);
+    }
+    deleteScheme(name){
+        if(!name) return;
+        config.savedSchemesConfig= config.savedSchemesConfig.filter(x=>x.name!=name);
+        config.updateSavedSchemes(config.savedSchemesConfig);
+        this.Client.emit("folderPreview:savedSchemes",config.savedSchemesConfig);
     }
 
     sendError(msg){

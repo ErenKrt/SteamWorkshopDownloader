@@ -7,12 +7,10 @@ import chalk from 'chalk';
 import http from 'http';
 import cors from 'cors';
 
-import { Config } from './config'
+import config from './config'
 import { Server }  from 'socket.io';
 import { Client } from '../api'
 import { WebSocket } from './webSocket'
-
-const config= new Config();
 
 const wdClient = new Client();
 
@@ -43,7 +41,7 @@ function startWeb(){
     
     startAPI()
 
-    const port= config.mainConfig.port || process.env.PORT || 8080;
+    const port= config.baseConfig.port || process.env.PORT || 8080;
     server.listen(port);
     console.log(chalk.green("Server is ready on ")+chalk.red(port));
 }

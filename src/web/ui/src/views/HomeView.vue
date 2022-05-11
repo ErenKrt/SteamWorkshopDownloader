@@ -52,8 +52,6 @@
 import ListItem from "@/components/ListItem.vue";
 import BlockUI from '@/components/BlockUI.vue'
 import API from '@/utils/API'
-import io from 'socket.io-client'
-
 
 export default {
   components:{ListItem, BlockUI},
@@ -65,7 +63,6 @@ export default {
         block:false
       },
       workshopItems:[],
-      socket: io(API.socketURL)
     }
   },
   async mounted(){

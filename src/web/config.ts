@@ -1,47 +1,66 @@
 import path from "path";
 import os from "os";
-import { MainConfig, SchemeSave } from "./types";
+import { MainConfig, SavedScheme } from "./types";
 import fs from "fs";
 
-export class Config {
+class Config {
     private defaultBaseConfig: MainConfig ={
         currentPath: process.cwd(),
         port: 3000
     };
+    private defaultSavedSchemes: SavedScheme[]=[];
 
-    private baseDir: string;
-    private baseConfig: string;
+    private baseDirectoryPath: string;
+    private baseConfigPath: string;
+    private savedSchemesPath: string;
 
-    mainConfig: MainConfig;
-    savedSchemesConfig: SchemeSave[];
+    baseConfig: MainConfig;
+    savedSchemesConfig: SavedScheme[];
 
     constructor(){
-        this.baseDir= path.resolve(os.homedir(),".steamwd/")
-        this.baseConfig=path.resolve(this.baseDir,"main.json");
-        this.mainConfig= this.readMainConfig();
+        this.baseDirectoryPath= path.resolve(os.homedir(),".steamwd/")
+        this.baseConfigPath=path.resolve(this.baseDirectoryPath,"main.json");
+        this.savedSchemesPath= path.resolve(this.baseDirectoryPath,"savedSchemes.json");
+
+        this.prepareFolders();
+        this.baseConfig= this.readMainConfig();
+        this.savedSchemesConfig= this.readSavedSchemesConfig();
+    }
+    prepareFolders(){
+        if(!fs.existsSync(this.baseConfigPath)) fs.mkdirSync(this.baseDirectoryPath);
+        if(!fs.existsSync(this.baseConfigPath)) this.writeFile(this.baseConfigPath,this.defaultBaseConfig);
+        if(!fs.existsSync(this.savedSchemesPath)) this.writeFile(this.savedSchemesPath,this.defaultSavedSchemes);
     }
 
     readMainConfig() : MainConfig{
-        let conf:MainConfig;
-
-        if(fs.existsSync(this.baseDir)==false) fs.mkdirSync(this.baseDir);
-
-        if(fs.existsSync(this.baseConfig)){
-            try {
-                conf= {...this.defaultBaseConfig, ...JSON.parse(fs.readFileSync(this.baseConfig,"utf-8"))};
-            } catch (error) {
-                conf= this.defaultBaseConfig;
-            }
-        }else{
-            fs.writeFileSync(this.baseConfig,JSON.stringify(this.defaultBaseConfig));
-            conf= this.defaultBaseConfig;
+        try {
+            return {...this.defaultBaseConfig, ...JSON.parse(fs.readFileSync(this.baseConfigPath,"utf-8"))};
+        } catch (error) {
+            return this.defaultBaseConfig;
         }
-
-        return conf;
+    }
+    readSavedSchemesConfig(): SavedScheme[]{
+        try {
+            return JSON.parse(fs.readFileSync(this.savedSchemesPath,"utf-8"));
+        } catch (error) {
+            return this.defaultSavedSchemes;
+        }
     }
     
-    writeMainConfig() : void {
-        fs.writeFileSync(this.baseConfig,JSON.stringify(this.defaultBaseConfig));
+    writeFile(filePath: string, config) : void {
+        fs.writeFileSync(filePath,JSON.stringify(config));
+    }
+
+    updateMainConfig(config: MainConfig){
+        this.writeFile(this.baseConfigPath,config);
+        this.baseConfig= this.readMainConfig();
+    }
+
+    updateSavedSchemes(schemes: SavedScheme[]){
+        this.writeFile(this.savedSchemesPath, schemes);
+        this.savedSchemesConfig= this.readSavedSchemesConfig();
     }
 
 }
+
+export default new Config();
