@@ -68,3 +68,48 @@ export const getAllDepIDS = async (MyClient,baseIDS)=>{
         Items:fetchedItems
     };
 };
+
+export const writeParams= (text,params) => {
+    const keys= Object.keys(params);
+
+    const isHaveKey=(key)=>{
+        return keys.includes(key) && params[key]!=null && params[key]!=undefined;
+    }
+
+    const regex = /{(.*?)}/g;
+    const result= [...text.matchAll(regex)];
+
+    if(result && result.length > 0){
+        result.forEach(findedRegex => {
+            var fullParam= findedRegex[0];
+            var innerParam= findedRegex[1];
+
+            var paramValue=null;
+
+            if(innerParam.includes('||')){
+                var split= innerParam.split('||');
+                for (var key in split) {
+                    var multikey= split[key].replace(" ","");
+                    if(isHaveKey(multikey)){
+                        paramValue=params[multikey];
+                        break;
+                    }
+                }
+            }else{
+                var innerkey= innerParam.replace(" ","");
+                if(isHaveKey(innerkey)){
+                    paramValue=params[innerkey];
+                }
+            }
+
+            
+
+            if(paramValue!=null){
+                text= text.replace(fullParam,paramValue);
+            }
+
+        });
+    }
+    console.log(text);
+    return text;
+}

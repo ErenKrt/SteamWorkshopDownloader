@@ -17,7 +17,7 @@
 
         <div class="col-3">
           <a v-if="Item.statu==null" class="stats-icon purple ms-2 float-end" href="#" @click="$emit('clicked',Item.publishedfileid)">
-            <i class="iconly-boldArrow---Down-3"></i>
+            <i class="bi bi-arrow-down"></i>
           </a>
         </div>
       </div>

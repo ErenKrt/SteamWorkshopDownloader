@@ -7,6 +7,7 @@ import { Scheme, SavedScheme } from './types'
 import _ from 'lodash'
 import defaultSchemes from './schemes'
 import config from './config';
+import { writeParams } from './utils'
 
 var folderTypes=[
     {
@@ -54,58 +55,6 @@ var folderTypes=[
         ]
     }
 ];
-
-/*
-var savedSchemes : SavedScheme[]=[
-    {
-        name:"Test-1",
-        items:[
-            {
-                id:0,
-                params:[
-                    {
-                        name:"Path",
-                        value:"31"
-                    }
-                ]
-            },
-            {
-                id:1,
-                params:[
-                    {
-                        name:"Name",
-                        value:"62"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        name:"Test-2",
-        items:[
-            {
-                id:1,
-                params:[
-                    {
-                        name:"Name",
-                        value:"31"
-                    }
-                ]
-            },
-            {
-                id:0,
-                params:[
-                    {
-                        name:"Path",
-                        value:"62"
-                    }
-                ]
-            }
-        ]
-    }
-];
-*/
-
 export class wsFolderPreview {
     Client : Socket;
     MainFolderPath: string;
@@ -183,7 +132,7 @@ export class wsFolderPreview {
     createFolder(){
         if(this.MainFolderPath && fs.existsSync(this.MainFolderPath))
                 fs.rmSync(this.MainFolderPath,{ recursive:true });
-                
+
         this.MainFolderPath= fs.mkdtempSync(path.join(os.tmpdir(), 'steamwd-fp-'));
         this.SimFolderPath= path.join(this.MainFolderPath,"sim");
         this.OrjFolderPath= path.join(this.MainFolderPath,"orj");
@@ -225,7 +174,6 @@ export class wsFolderPreview {
             this.Client.emit("folderPreview:mainFolder",this.MainFolderPath);
             this.Client.emit("folderPreview:folder",this.getChilds(this.SimFolderPath))
     }
-
     runSchemes(schemes: Scheme[]){
         this.copyOrjToSim();
 
@@ -234,12 +182,18 @@ export class wsFolderPreview {
             return;
         }
 
+        const params={
+            safe_disk_title:folderTypes[this.SelectedFolder].name.toLocaleLowerCase().replace(" ",""),
+            id: "3131",
+            test:null
+        }
+
         let executeAll= (scheme,myscheme)=>{
             if(myscheme.childs && myscheme.childs.length > 0){
                 if(scheme.execute(myscheme.params.map((x)=>{
                     if(path.isAbsolute(x.value)){
-                        return x.value;
-                    }else return path.join(this.SimFolderPath,x.value)
+                        return writeParams(x.value,params);
+                    }else return path.join(this.SimFolderPath,writeParams(x.value,params))
                 }))===true){
                     (myscheme.childs).forEach(singleChild => {
                         var bul= defaultSchemes.find(x=>x.id==singleChild.id);
@@ -249,8 +203,8 @@ export class wsFolderPreview {
             }else{
                 scheme.execute(myscheme.params.map((x)=>{
                     if(path.isAbsolute(x.value)){
-                        return x.value;
-                    }else return path.join(this.SimFolderPath,x.value)
+                        return writeParams(x.value,params);
+                    }else return path.join(this.SimFolderPath,writeParams(x.value,params))
                 }));
             }
         }

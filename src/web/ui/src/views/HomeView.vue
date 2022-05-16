@@ -19,6 +19,19 @@
         </div>
       </BlockUI>
 
+       <BlockUI class="card" :blocked="savedSchemes==null">
+       <div class="card-header">
+         <button v-if="selectedScheme" class="btn btn-info float-end" @click="selectedScheme=null">
+            Clear
+          </button>
+          <h4>Saved Schemes</h4>
+          <small v-if="selectedScheme">Selected Scheme: {{selectedScheme.name}}</small>
+        </div>
+        <div class="card-body">
+          <button class="btn btn-success me-2" v-for="(saved,i) in savedSchemes" :key="i" @click="selectedScheme=saved">{{saved.name}}</button>
+        </div>
+      </BlockUI>
+
       <div class="card">
         <div class="card-header">
           <button class="btn btn-info float-end" @click="workshopItems = []">
@@ -26,8 +39,13 @@
           </button>
           <h4>Workshop Items ({{ workshopItems.length }})</h4>
         </div>
-        <div class="card-content pb-4">
+        <div class="card-content pb-4" v-if="workshopItems!=null && workshopItems.length > 0">
           <div class="px-4">
+            <input
+                type="text"
+                placeholder="Search in collection"
+                class="form-control mb-2"
+              />
             <button
               class="btn btn-block btn-xl btn-success font-bold mb-3"
               @click="downloadAll"
@@ -37,7 +55,7 @@
           </div>
 
           <ListItem
-            v-for="(item, index) in workshopItems"
+            v-for="(item, index) in filteredWorkshops"
             :key="index"
             :Item="item"
             @clicked="download"
@@ -62,6 +80,8 @@ export default {
         writedID:"2712258971",
         block:false
       },
+      savedSchemes: null,
+      selectedScheme: null,
       workshopItems:[],
     }
   },
@@ -73,15 +93,25 @@ export default {
     }
     this.schemes= GetSchemes.data;
 
-    this.socket.on("statu",this.statu)
-    this.socket.on("prepared",this.prepared);
+    this.$socket.emit('folderPreview:getSavedSchemes');
+
+    this.$socket.on("statu",this.statu)
+    this.$socket.on("prepared",this.prepared);
+    this.$socket.on("folderPreview:savedSchemes",(data)=>{
+      this.savedSchemes=data;
+    })
+  },
+  computed:{
+    filteredWorkshops(){
+      return this.workshopItems;
+    }
   },
   methods:{
     downloadAll(){
-      this.socket.emit("download",this.workshopItems.map(x=>x.publishedfileid));
+      this.$socket.emit("download",this.workshopItems.map(x=>x.publishedfileid));
     },
     download(id){
-      this.socket.emit("download",[id]);
+      this.$socket.emit("download",[id]);
     },
     statu(args){
       var ID= args.publishedfileid;
