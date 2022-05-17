@@ -16,7 +16,7 @@
     "socket.io-client": "^4.4.1",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
-    "vue-sweetalert2": "^5.0.2",
+    "vue-sweetalert2": "^5.0.5",
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {

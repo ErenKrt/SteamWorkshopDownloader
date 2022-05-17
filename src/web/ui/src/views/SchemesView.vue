@@ -168,12 +168,12 @@ export default {
       this.schemeName=scheme.name;
       this.schemes2=[];
       nextTick(()=>{
-        this.schemes2= scheme.schemes;
+        this.schemes2= scheme.items;
       });
       
     },
     saveScheme(){
-      this.$socket.emit("folderPreview:saveScheme",{name: this.schemeName, schemes: this.schemes2});
+      this.$socket.emit("folderPreview:saveScheme",{name: this.schemeName, items: this.schemes2});
     },
     deleteScheme(){
       this.$socket.emit("folderPreview:deleteScheme",this.schemeName);

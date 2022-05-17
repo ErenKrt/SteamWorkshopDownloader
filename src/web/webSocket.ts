@@ -5,8 +5,11 @@ import Downloader from "nodejs-file-downloader"
 import { makeDownloadUrl } from '../api/utils';
 import os from 'os'
 import path from 'path';
-import fs, { readdirSync } from 'fs';
+import fs, { readdirSync, rmSync } from 'fs';
 import { wsFolderPreview } from './wsFolderPreivew'
+import AdmZip  from 'adm-zip'
+import config from './config';
+import { execute } from './schemeRenderer'
 
 export class WebSocket{
     private server: Server;
@@ -38,7 +41,7 @@ export class WebSocket{
         });
 
         client.on("download",(args)=>{
-            this.download(this.getSession(client.id),args);
+            this.download(this.getSession(client.id),args.scheme, args.items);
         })
 
         client.on("disconnect",()=>{
@@ -56,9 +59,8 @@ export class WebSocket{
         });
     }
     
-    async download(session: Session, IDS: number[]){
-
-        var files= await wdClient.getFiles(IDS,(statu)=>{
+    async download(session: Session, scheme, Items){
+        var files= await wdClient.getFiles(Items.map(x=>x.publishedfileid),(statu)=>{
             session.socket.emit("statu",
                 {
                     publishedfileid:statu.publishedfileid,
@@ -75,11 +77,15 @@ export class WebSocket{
             })
             return;
         }
+        let getItemName= (ID)=>{
+            return Items.find(x=>x.publishedfileid==ID)?.title_disk_safe;
+        };
 
         let downs= [];
 
         (files.data).forEach(x => {
-                
+            var itemName= getItemName(x.publishedfileid);
+
             var down = new Downloader({
                 url: makeDownloadUrl(x),
                 directory: "./",
@@ -90,9 +96,23 @@ export class WebSocket{
                         progressText: "Downloading %"+percentage
                     })
                 },
+                onBeforeSave: ()=>{
+                    return itemName+".zip";
+                }
             });
-    
-            downs.push(down.download());
+            
+            downs.push(down.download().then(()=>{
+                var workshopFolderPath= path.join(config.baseConfig.currentPath,itemName);
+
+                var zip= new AdmZip(path.join(config.baseConfig.currentPath,itemName+".zip"));
+                zip.extractAllTo(workshopFolderPath);
+                rmSync(path.join(config.baseConfig.currentPath,itemName+".zip"),{recursive:true, force: true});
+
+                if(scheme && config.savedSchemesConfig.find(x=>x.name==scheme)!=null){
+                   execute(workshopFolderPath,config.savedSchemesConfig.find(x=>x.name==scheme).items,Items.find(x=>x.publishedfileid==x.publishedfileid))
+                }
+
+            }));
         });
 
         await Promise.all(downs);

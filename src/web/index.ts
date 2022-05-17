@@ -12,7 +12,9 @@ import { Server }  from 'socket.io';
 import { Client } from '../api'
 import { WebSocket } from './webSocket'
 
-const wdClient = new Client();
+const wdClient = new Client({
+    apiVersion:"node05"
+});
 
 const app = express()
 const server = http.createServer(app)
@@ -37,6 +39,9 @@ function startAPI(){
 }
 
 function startWeb(){
+    config.baseConfig.currentPath= process.cwd();
+    config.updateMainConfig(config.baseConfig);
+
     var socket= new WebSocket(server);
     
     startAPI()

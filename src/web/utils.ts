@@ -1,6 +1,7 @@
 import fs from "fs";
 import { FileInfo } from './types'
 import FileHound from 'filehound';
+import path from "path";
 
 
 export const getFolders= (appPath)=>{
@@ -69,6 +70,11 @@ export const getAllDepIDS = async (MyClient,baseIDS)=>{
     };
 };
 
+export const isRelative= (basePath, targetPath)=>{
+    var relative= path.relative(basePath,targetPath);
+    return (relative && !relative.startsWith('..') && !path.isAbsolute(relative))
+}
+
 export const writeParams= (text,params) => {
     const keys= Object.keys(params);
 
@@ -110,6 +116,6 @@ export const writeParams= (text,params) => {
 
         });
     }
-    console.log(text);
+
     return text;
 }

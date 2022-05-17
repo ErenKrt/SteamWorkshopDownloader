@@ -33,6 +33,9 @@ class API{
     async getSchemes(){
         return await this.request("GET","/getSchemes");
     }
+    async getConfig(){
+        return await this.request("GET","/getConfig");
+    }
 }
 
 export default new API();

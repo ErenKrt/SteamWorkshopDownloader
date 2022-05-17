@@ -22,7 +22,8 @@ var schemes:Scheme[] = [
         acceptChilds:false,
         execute: (params)=>{
             if(params[0] && fs.existsSync(params[0]))
-                fs.unlinkSync(params[0]);
+                if(isFile(params[0])) fs.unlinkSync(params[0]);
+                else fs.rmSync(params[0], {recursive:true});
         }
     },
     {

@@ -8,6 +8,8 @@ import _ from 'lodash'
 import defaultSchemes from './schemes'
 import config from './config';
 import { writeParams } from './utils'
+import { execute } from './schemeRenderer'
+
 
 var folderTypes=[
     {
@@ -183,40 +185,13 @@ export class wsFolderPreview {
         }
 
         const params={
-            safe_disk_title:folderTypes[this.SelectedFolder].name.toLocaleLowerCase().replace(" ",""),
-            id: "3131",
-            test:null
-        }
-
-        let executeAll= (scheme,myscheme)=>{
-            if(myscheme.childs && myscheme.childs.length > 0){
-                if(scheme.execute(myscheme.params.map((x)=>{
-                    if(path.isAbsolute(x.value)){
-                        return writeParams(x.value,params);
-                    }else return path.join(this.SimFolderPath,writeParams(x.value,params))
-                }))===true){
-                    (myscheme.childs).forEach(singleChild => {
-                        var bul= defaultSchemes.find(x=>x.id==singleChild.id);
-                        if(bul!=null) executeAll(bul,singleChild);
-                    });
-                }
-            }else{
-                scheme.execute(myscheme.params.map((x)=>{
-                    if(path.isAbsolute(x.value)){
-                        return writeParams(x.value,params);
-                    }else return path.join(this.SimFolderPath,writeParams(x.value,params))
-                }));
-            }
+            safe_disk_title:folderTypes[this.SelectedFolder].name.toLocaleLowerCase().replace(" ","")
         }
 
         try {
-            schemes.forEach(SingleScheme => {
-                var find= defaultSchemes.find(x=>x.name==SingleScheme.name);
-                if(find)
-                    executeAll(find,SingleScheme);
-            });
+            execute(this.SimFolderPath,schemes,params);
         } catch (error) {
-            this.sendError(error.message);
+            this.sendError(error.message || error);
         }
 
         this.readFolder();
@@ -224,10 +199,11 @@ export class wsFolderPreview {
 
     saveSchemes(data){
         if(!data.name) return;
-        if(!data.schemes) return;
+        if(!data.items) return;
+
         let find= config.savedSchemesConfig.find(x=>x.name==data.name);
         if(find)
-            find.items= data.schemes;
+            find.items= data.items;
         else
             config.savedSchemesConfig.push(data);
 

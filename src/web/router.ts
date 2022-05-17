@@ -4,11 +4,15 @@ import Schemes from './schemes'
 import express from 'express'
 import path from 'path';
 import { wdClient } from './index'
+import config from './config';
+
 const operator = express.Router();
 
-operator.route('/').get((req, res, next) => {
-    res.json({a:5});
-})
+
+operator.route('/getConfig').get((req, res, next)=>{
+    res.json({success:true,data:config.baseConfig});
+});
+
 
 operator.route('/getSchemes').get((req, res, next)=>{
     res.json({success:true,data:Schemes});

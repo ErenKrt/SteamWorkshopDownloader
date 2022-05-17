@@ -11,6 +11,7 @@ export class Client{
     constructor(config? : ClientConfig){
         this.config= {...defaultConfig, ...config};
         
+
         this.client= axios.create({
             baseURL:`https://${this.config.apiVersion}.steamworkshopdownloader.io/${this.config.apiPrefix}/`,
             headers:{

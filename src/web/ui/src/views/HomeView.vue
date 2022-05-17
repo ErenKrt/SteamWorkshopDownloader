@@ -31,12 +31,12 @@
           <button class="btn btn-success me-2" v-for="(saved,i) in savedSchemes" :key="i" @click="selectedScheme=saved">{{saved.name}}</button>
         </div>
       </BlockUI>
-
       <div class="card">
         <div class="card-header">
           <button class="btn btn-info float-end" @click="workshopItems = []">
             Clear
           </button>
+          {{mainPath}}
           <h4>Workshop Items ({{ workshopItems.length }})</h4>
         </div>
         <div class="card-content pb-4" v-if="workshopItems!=null && workshopItems.length > 0">
@@ -45,12 +45,18 @@
                 type="text"
                 placeholder="Search in collection"
                 class="form-control mb-2"
+                v-model="searchWorkshop"
               />
-            <button
-              class="btn btn-block btn-xl btn-success font-bold mb-3"
-              @click="downloadAll"
-            >
+
+            <button class="btn btn-block btn-xl btn-success font-bold mb-3" @click="downloadAll">
+              <template v-if="searchWorkshop">
+              Download Searched
+              </template>
+
+              <template v-else>
               Download All
+              </template>
+              
             </button>
           </div>
 
@@ -58,7 +64,7 @@
             v-for="(item, index) in filteredWorkshops"
             :key="index"
             :Item="item"
-            @clicked="download"
+            @clicked="downloadSingle"
           />
         </div>
       </div>
@@ -83,6 +89,8 @@ export default {
       savedSchemes: null,
       selectedScheme: null,
       workshopItems:[],
+      searchWorkshop: null,
+      mainPath:null
     }
   },
   async mounted(){
@@ -92,6 +100,13 @@ export default {
       return;
     }
     this.schemes= GetSchemes.data;
+
+    var GetConfig= await API.getConfig();
+    if(GetConfig.success==false){
+      this.$swal("Cant fetch config. Please reload page.");
+      return;
+    }
+    this.mainPath= GetConfig.data.currentPath;
 
     this.$socket.emit('folderPreview:getSavedSchemes');
 
@@ -103,15 +118,30 @@ export default {
   },
   computed:{
     filteredWorkshops(){
-      return this.workshopItems;
+      if(this.searchWorkshop){
+        return this.workshopItems
+          .filter(x=>
+            x.title.toLowerCase().includes(this.searchWorkshop.toLowerCase()) ||
+            x.title_disk_safe.toLowerCase().includes(this.searchWorkshop.toLowerCase()) ||
+            x.app_name.toLowerCase().includes(this.searchWorkshop.toLowerCase()) ||
+            x.publishedfileid.toLowerCase().includes(this.searchWorkshop.toLowerCase())
+          );
+      }else return this.workshopItems;
     }
   },
   methods:{
-    downloadAll(){
-      this.$socket.emit("download",this.workshopItems.map(x=>x.publishedfileid));
+    getItemByID(ID){
+      return this.filteredWorkshops.find(x=>x.publishedfileid==ID)
     },
-    download(id){
-      this.$socket.emit("download",[id]);
+    download(items){
+      this.$socket.emit("download",{scheme:this.selectedScheme?.name,items});
+    },
+    downloadAll(){
+      this.download(this.filteredWorkshops.map(x=>({title:x.title,title_disk_safe:x.title_disk_safe,publishedfileid:x.publishedfileid})))
+    },
+    downloadSingle(id){
+      var {title, title_disk_safe, publishedfileid}= this.getItemByID(id);
+      if(title && title_disk_safe && publishedfileid) this.download([{title, title_disk_safe, publishedfileid}]);
     },
     statu(args){
       var ID= args.publishedfileid;
