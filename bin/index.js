@@ -60,7 +60,7 @@ program.parse();
 
 
 if(options.isWeb){
-    startWeb();
+    startWeb(3000,process.cwd());
 }else{
 
 var MyClient = new Client();

@@ -13,7 +13,7 @@ import { Client } from '../api'
 import { WebSocket } from './webSocket'
 
 const wdClient = new Client({
-    apiVersion:"node05"
+    apiVersion:"node02"
 });
 
 const app = express()
@@ -31,10 +31,10 @@ function startAPI(){
     app.use('/api', router)
      
     app.get('/', (req, res, next) => {
-        if(process.env.NODE_ENV.trim() === "dev")
+        if(process.env.NODE_ENV === "dev")
             res.redirect("http://localhost:3000/");
         else
-            res.sendFile('./public/index.html')
+            res.sendFile(path.join(__dirname, '/public/index.html'))
     })
 }
 

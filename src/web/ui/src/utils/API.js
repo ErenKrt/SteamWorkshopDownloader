@@ -2,9 +2,14 @@ const { default: axios } = require("axios");
 
 class API{
     constructor(){
-        this.baseURL="http://127.0.0.1:3000/api",
-        this.socketURL= "http://127.0.0.1:3000/";
-
+        if(process.env.NODE_ENV==='development'){
+            this.baseURL="http://127.0.0.1:3000/api",
+            this.socketURL= "http://127.0.0.1:3000/";
+        }else{
+            this.baseURL="/api",
+            this.socketURL= "/";
+        }
+        
         this.client= axios.create({
             baseURL: this.baseURL
         })

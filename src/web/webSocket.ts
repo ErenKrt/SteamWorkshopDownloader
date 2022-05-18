@@ -103,10 +103,12 @@ export class WebSocket{
             
             downs.push(down.download().then(()=>{
                 var workshopFolderPath= path.join(config.baseConfig.currentPath,itemName);
+                var workshopZipPath= workshopFolderPath+".zip";
 
-                var zip= new AdmZip(path.join(config.baseConfig.currentPath,itemName+".zip"));
+                var zip= new AdmZip(workshopZipPath);
                 zip.extractAllTo(workshopFolderPath);
-                rmSync(path.join(config.baseConfig.currentPath,itemName+".zip"),{recursive:true, force: true});
+                
+                rmSync(workshopZipPath,{recursive:true, force: true});
 
                 if(scheme && config.savedSchemesConfig.find(x=>x.name==scheme)!=null){
                    execute(workshopFolderPath,config.savedSchemesConfig.find(x=>x.name==scheme).items,Items.find(x=>x.publishedfileid==x.publishedfileid))
