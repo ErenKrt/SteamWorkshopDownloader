@@ -72,7 +72,7 @@ let showError = (message) => {
 };
 
 let getNameFromID= (ID)=>{
-    return fetchedItems.find(x => x.publishedfileid == ID)?.title_disk_safe || ID;
+    return fetchedItems.find(x => x.publishedfileid == ID).title_disk_safe || ID;
 };
 
 let getItems= async (IDS) =>{
@@ -89,7 +89,7 @@ let getItems= async (IDS) =>{
             if (GetItem.success == false) return showError(GetItem.message);
             fetchedItems= fetchedItems.concat(GetItem.data);
         }
-
+	
         if ((options.downloadDependencies || SingleItem.file_type == 2) && SingleItem.children != null && SingleItem.children.length > 0) {
             var lookIDS = SingleItem.children.map(x => x.publishedfileid);
             
@@ -98,11 +98,11 @@ let getItems= async (IDS) =>{
             var getDeps = await getAllDepIDS(MyClient,lookIDS);
 
             ResIDS= ResIDS.concat(getDeps.IDS);
-            fetchedItems= getDeps.Items;
+            fetchedItems= fetchedItems.concat(getDeps.Items);
             ResIDS = ResIDS.filter((item, i, ar) => ar.indexOf(item) === i);
         }
     }
-    
+
     return ResIDS;
 };
 
@@ -193,7 +193,10 @@ let download = async (Items) => {
 
 getItems(downWorkshopIDS)
     .then(async IDS=>{
+
+
         console.log(chalk.green("Will be download item count: "+IDS.length));
+        
         var workShopIDS= _.chunk(IDS,options.downloadCount);
 
         for await(const WIDS of workShopIDS){
