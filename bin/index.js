@@ -2,6 +2,7 @@
 
 const chalk = require('chalk');
 const { Client } = require('../dist/api');
+const {startWeb} = require('../dist/web')
 const { makeDownloadUrl } = require('../dist/api/utils');
 const { Command } = require('commander');
 const Downloader = require("nodejs-file-downloader")
@@ -19,7 +20,8 @@ let options={
     downloadDependencies:false,
     unzip:false,
     unzipDelete: false,
-    downloadCount:20
+    downloadCount:20,
+    isWeb: false
 }
 
 const program = new Command();
@@ -48,9 +50,18 @@ program.command('download', { isDefault: true })
         }
     });
 
+
+program.command('web',{isDefault: false})
+    .action((data,clioptions)=>{
+        options.isWeb= true;
+    });
+
 program.parse();
 
 
+if(options.isWeb){
+    startWeb(3000,process.cwd());
+}else{
 
 var MyClient = new Client();
 
@@ -141,7 +152,6 @@ let download = async (Items) => {
     let downs = [];
 
     (Items).forEach(x => {
-
         const progress = multiBar.create(100, 0, { name: getNameFromID(x.publishedfileid)});
         var down = new Downloader({
             url: makeDownloadUrl(x),
@@ -195,3 +205,5 @@ getItems(downWorkshopIDS)
             if(Items!=null) await download(Items);
         }
     }).catch(err=>showError(err));
+  
+}

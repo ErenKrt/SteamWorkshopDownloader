@@ -9,7 +9,7 @@
       "types": ["node"],
       "outDir": "dist",
       "rootDir": "src",
-      "declaration": true
+      "declaration": true,
     },
     "exclude": [
       "dist",
