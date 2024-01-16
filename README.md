@@ -1,4 +1,5 @@
-THIS PROJECT NO LONGER SUPPORT. FOR [INFO](https://www.reddit.com/r/swd_io/comments/uy55qg/we_are_no_longer_serving_any_files_through_our/)
+
+THIS PROJECT WILL MOVE C# BASE.
 
 Download your Mods,Workshop items with SteamWorkshopDownloader on NodeJS.
 Currently using steamworkshopdownloader.io backend. 
